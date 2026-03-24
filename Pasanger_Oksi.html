@@ -6,15 +6,15 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="GrescoBus">
+    <meta name="apple-mobile-web-app-title" content="Oksana CRM">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1a3a5e">
-    <meta name="application-name" content="GrescoBus CRM">
+    <meta name="application-name" content="Oksana CRM">
     <link rel="apple-touch-icon" href="icon-180.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>GrescoBus CRM Пасажири v2</title>
+    <title>Oksana CRM Пасажири v2</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1001,7 +1001,7 @@
 <header class="header">
     <div class="header-top">
         <button class="burger-btn" onclick="openSideMenu()">☰</button>
-        <div class="logo">Gresco<span>Bus</span></div>
+        <div class="logo">Oksana<span>CRM</span></div>
         <div class="search-box">
             <span class="search-icon">🔍</span>
             <input class="search-input" type="text" id="globalSearch" placeholder="Пошук по ПІБ або телефону..." oninput="onSearchInput()">
@@ -1709,8 +1709,8 @@
     }).catch(function() {
         // Fallback — inline manifest (для Google Apps Script)
         var m = {
-            name: 'GrescoBus CRM', short_name: 'GrescoBus',
-            description: 'CRM Пасажири — GrescoBus',
+            name: 'Oksana CRM', short_name: 'Oksana CRM',
+            description: 'CRM Пасажири — Oksana',
             start_url: location.href, display: 'standalone',
             orientation: 'portrait', theme_color: '#1a3a5e', background_color: '#f5f7fa',
             icons: [
@@ -1749,7 +1749,7 @@ function installApp() {
         deferredInstallPrompt.prompt();
         deferredInstallPrompt.userChoice.then(function(result) {
             if (result.outcome === 'accepted') {
-                showToast('GrescoBus встановлено!');
+                showToast('Oksana CRM встановлено!');
                 var banner = document.getElementById('installBanner');
                 if (banner) banner.style.display = 'none';
             }
@@ -1837,11 +1837,11 @@ const OTHER_SECTIONS = [
 ];
 function getManagerColsKey() {
     var name = getManagerName() || 'default';
-    return 'gresco_cols_' + name.replace(/\s+/g, '_');
+    return 'oksi_cols_' + name.replace(/\s+/g, '_');
 }
 function getManagerCardKey() {
     var name = getManagerName() || 'default';
-    return 'gresco_card_' + name.replace(/\s+/g, '_');
+    return 'oksi_card_' + name.replace(/\s+/g, '_');
 }
 function getCardFields() {
     try { var s = localStorage.getItem(getManagerCardKey()); if (s) return JSON.parse(s); } catch(e) {}
@@ -1910,8 +1910,8 @@ let paymentsCache = {}; // Кеш платежів: { PAX_ID: [...] }
 // ================================================================
 // MANAGER LOGIN — 3 слоти, без пароля, localStorage
 // ================================================================
-var MANAGER_SLOTS_KEY = 'gresco_manager_slots';
-var MANAGER_ACTIVE_KEY = 'gresco_manager_name';
+var MANAGER_SLOTS_KEY = 'oksi_manager_slots';
+var MANAGER_ACTIVE_KEY = 'oksi_manager_name';
 
 function getManagerSlots() {
     try {
@@ -1984,13 +1984,13 @@ function renameManager(idx) {
     var newName = prompt('Нове ім\'я для слота ' + (idx + 1) + ':', slots[idx]);
     if (newName !== null && newName.trim()) {
         var oldName = slots[idx];
-        var oldKey = 'gresco_cols_' + oldName.replace(/\s+/g, '_');
+        var oldKey = 'oksi_cols_' + oldName.replace(/\s+/g, '_');
         slots[idx] = newName.trim();
         saveManagerSlots(slots);
         // Мігруємо налаштування на нове ім'я
         var newSuffix = newName.trim().replace(/\s+/g, '_');
         var oldSuffix = oldName.replace(/\s+/g, '_');
-        ['gresco_cols_', 'gresco_card_'].forEach(function(prefix) {
+        ['oksi_cols_', 'oksi_card_'].forEach(function(prefix) {
             var oldData = localStorage.getItem(prefix + oldSuffix);
             if (oldData) {
                 localStorage.setItem(prefix + newSuffix, oldData);
@@ -3131,7 +3131,7 @@ function updateAppBadge(count) {
         }
     }
     // 2. Оновлюємо title сторінки — видно в табах і на деяких платформах
-    const baseTitle = 'GrescoBus CRM';
+    const baseTitle = 'Oksana CRM';
     document.title = count > 0 ? '(' + count + ') ' + baseTitle : baseTitle;
 
     // 3. Динамічний favicon з лічильником (працює скрізь)
@@ -7144,8 +7144,8 @@ function routeBulkDeleteFull() {
 // ================================================================
 // ONBOARDING — навчання з підсвіткою кнопок
 // ================================================================
-const OB_KEY = 'gresco_onboard_done';
-const OB_CAT_KEY = 'gresco_onboard_cats';
+const OB_KEY = 'oksi_onboard_done';
+const OB_CAT_KEY = 'oksi_onboard_cats';
 let _obStep = 0, _obCat = null, _obSteps = [];
 
 const OB_CATS = [
