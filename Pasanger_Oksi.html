@@ -388,6 +388,14 @@
         .trip-filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: white; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; }
         .trip-filter-btn:hover { border-color: var(--orange); }
         .trip-filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+        /* Route filter section toggles */
+        .rte-section-toggle { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: #f8fafc; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; color: var(--text-secondary); }
+        .rte-section-toggle:hover { border-color: var(--primary); color: var(--primary); }
+        .rte-section-toggle.open { background: var(--primary); color: white; border-color: var(--primary); }
+        .rte-section-toggle.open span { display: inline-block; transform: rotate(90deg); }
+        .rte-filter-hidden { display: none !important; }
+        .rte-filter-visible { display: contents !important; }
         .trip-filter-btn.dir-ua-eu { border-color: #2563eb; color: #2563eb; font-weight: 800; }
         .trip-filter-btn.dir-ua-eu:hover { background: #dbeafe; }
         .trip-filter-btn.dir-ua-eu.active { background: #2563eb; color: white; border-color: #2563eb; }
@@ -1311,14 +1319,19 @@
         <!-- ROUTES VIEW -->
         <div class="routes-view" id="routesView" style="display:none;">
             <div id="routeHeaderBar" class="route-header-bar" style="display:none;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                    <div>
-                        <h2 id="routeViewTitle" style="margin:0;font-size:20px;font-weight:800;">🚐 Маршрут</h2>
-                        <div class="route-subtitle" id="routeSubtitle"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;" onclick="toggleRouteDashboard()">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <h2 id="routeViewTitle" style="margin:0;font-size:18px;font-weight:800;">🚐 Маршрут</h2>
+                        <span class="route-subtitle" id="routeSubtitle" style="margin:0;"></span>
                     </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span id="routeDashToggle" style="font-size:11px;opacity:0.6;transition:transform 0.3s;">▼</span>
+                    </div>
+                </div>
+                <div id="routeDashContent" style="display:none;margin-top:10px;">
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        <button class="bs-btn" style="background:rgba(124,58,237,0.9);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(124,58,237,0.5);" onclick="optimizeRouteOrder()">⚡ Оптимізувати порядок</button>
-                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="loadRoutes(true)">🔄 Оновити</button>
+                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="event.stopPropagation();optimizeRouteOrder()">⚡ Оптимізувати порядок</button>
+                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="event.stopPropagation();loadRoutes(true)">🔄 Оновити</button>
                     </div>
                 </div>
             </div>
@@ -1328,21 +1341,32 @@
             </div>
             <!-- Route filters -->
             <div id="routeFiltersBar" style="display:none;margin-bottom:12px;">
-                <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+                <!-- Рядок 1: Тип запису -->
+                <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
                     <button class="trip-filter-btn active" id="rteFilterAll" onclick="setRouteTypeFilter('all',this)">Всі</button>
                     <button class="trip-filter-btn" id="rteFilterPax" onclick="setRouteTypeFilter('pax',this)">👤 Пасажири</button>
                     <button class="trip-filter-btn" id="rteFilterParcel" onclick="setRouteTypeFilter('parcel',this)">📦 Посилки</button>
-                    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
-                    <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="border-color:#f59e0b;color:#92400e;">Новий</button>
-                    <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
-                    <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="border-color:#10b981;color:#059669;">Підтверджено</button>
-                    <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="border-color:#ef4444;color:#dc2626;">Відмова</button>
-                    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
-                    <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="border-color:#ef4444;color:#dc2626;">Не оплачено</button>
-                    <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="border-color:#f59e0b;color:#92400e;">Частково</button>
-                    <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="border-color:#10b981;color:#059669;">Оплачено</button>
+                </div>
+                <!-- Рядок 2: Статуси (розгортається) -->
+                <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+                    <button class="rte-section-toggle" onclick="toggleRteFilterSection('status',this)">📋 Статуси <span style="font-size:9px;">►</span></button>
+                    <div id="rteStatusFilters" class="rte-filter-hidden">
+                        <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)">Всі</button>
+                        <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="border-color:#f59e0b;color:#92400e;">Новий</button>
+                        <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
+                        <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="border-color:#10b981;color:#059669;">Підтверджено</button>
+                        <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="border-color:#ef4444;color:#dc2626;">Відмова</button>
+                    </div>
+                </div>
+                <!-- Рядок 3: Фінанси (розгортається) -->
+                <div style="display:flex;gap:5px;align-items:center;">
+                    <button class="rte-section-toggle" onclick="toggleRteFilterSection('pay',this)">💰 Фінанси <span style="font-size:9px;">►</span></button>
+                    <div id="rtePayFilters" class="rte-filter-hidden">
+                        <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)">Всі</button>
+                        <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="border-color:#ef4444;color:#dc2626;">Не оплачено</button>
+                        <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="border-color:#f59e0b;color:#92400e;">Частково</button>
+                        <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="border-color:#10b981;color:#059669;">Оплачено</button>
+                    </div>
                 </div>
             </div>
             <!-- Route bulk toolbar -->
@@ -2630,6 +2654,27 @@ async function openRoute(idx) {
         showToast('❌ Помилка завантаження маршруту: ' + (e.message || ''));
     }
     showRoutesView();
+}
+
+// ── Згортальний дашборд маршруту ──
+function toggleRouteDashboard() {
+    var content = document.getElementById('routeDashContent');
+    var toggle = document.getElementById('routeDashToggle');
+    if (!content) return;
+    var isOpen = content.style.display !== 'none';
+    content.style.display = isOpen ? 'none' : 'block';
+    if (toggle) toggle.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// ── Розгортальні секції фільтрів (Статуси / Фінанси) ──
+function toggleRteFilterSection(section, btn) {
+    var id = section === 'status' ? 'rteStatusFilters' : 'rtePayFilters';
+    var el = document.getElementById(id);
+    if (!el) return;
+    var isHidden = el.classList.contains('rte-filter-hidden');
+    el.classList.toggle('rte-filter-hidden', !isHidden);
+    el.classList.toggle('rte-filter-visible', isHidden);
+    btn.classList.toggle('open', isHidden);
 }
 
 // ── Фільтри маршруту ──
