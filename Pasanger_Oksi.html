@@ -2949,7 +2949,13 @@ function toggleRouteSelectAll() {
     } else {
         filtered.forEach(r => routeSelectedIds.add(r['RTE_ID']));
     }
+    // Не ховаємо toolbar — тільки оновлюємо лічильник
+    const ct = document.getElementById('routeBulkCount');
+    if (ct) ct.textContent = routeSelectedIds.size + ' обрано';
     renderRoutes();
+    // Залишаємо toolbar видимим
+    const tb = document.getElementById('routeBulkToolbar');
+    if (tb) tb.classList.add('show');
 }
 function clearRouteSelection() {
     routeSelectedIds.clear();
