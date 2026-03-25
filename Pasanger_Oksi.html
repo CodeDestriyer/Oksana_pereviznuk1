@@ -2946,11 +2946,12 @@ function toggleRouteSelectAll() {
     const sheet = routes[activeRouteIdx];
     if (!sheet) return;
     const filtered = getFilteredRouteRows(sheet.rows || []);
-    if (routeSelectedIds.size > 0) {
-        // Є вибрані — знімаємо всі
+    const allSelected = filtered.length > 0 && filtered.every(r => routeSelectedIds.has(r['RTE_ID']));
+    if (allSelected) {
+        // Всі вибрані — знімаємо всі
         routeSelectedIds.clear();
     } else {
-        // Немає вибраних — вибираємо всі
+        // Не всі вибрані — вибираємо всі
         filtered.forEach(r => routeSelectedIds.add(r['RTE_ID']));
     }
     _routeToolbarForceOpen = true;
