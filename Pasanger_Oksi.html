@@ -3386,8 +3386,7 @@ function getFilteredPassengers() {
         else if (tripFilter !== 'all' && tripFilter !== 'none' && p['CAL_ID'] !== tripFilter) return false;
         // Фільтр по даті з календаря пасажирів
         if (paxCalSelectedDate) {
-            var dep = String(p['Дата виїзду'] || '');
-            var depDate = dep.replace(/\s.*/, ''); // "dd.MM.yyyy HH:mm" → "dd.MM.yyyy"
+            var depDate = formatTripDate(p['Дата виїзду'] || '');
             if (depDate !== paxCalSelectedDate) return false;
         }
         if (search) {
@@ -5758,8 +5757,8 @@ function renderPaxCalendar() {
     passengers.forEach(function(p) {
         if ((p['Статус CRM'] || 'Активний') === 'Архів') return;
         if (paxCalDirFilter !== 'all' && !isDir(p, paxCalDirFilter)) return;
-        var dep = String(p['Дата виїзду'] || '').replace(/\s.*/, '');
-        if (!dep) return;
+        var dep = formatTripDate(p['Дата виїзду'] || '');
+        if (!dep || dep === '—') return;
         var parts = dep.split('.');
         if (parts.length < 3) return;
         var pm = parseInt(parts[1], 10) - 1;
