@@ -1902,10 +1902,25 @@ function apiAddToRoute(params) {
 
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
 
+  var added = 0;
   for (var i = 0; i < leads.length; i++) {
     var lead = leads[i];
-    var row = headers.map(function(h) { return lead[h] || ''; });
-    sheet.appendRow(row);
+    // Маппінг: шукаємо значення за точним ключем або нормалізованим
+    var row = headers.map(function(h) {
+      if (lead[h] !== undefined && lead[h] !== null) return lead[h];
+      // Пошук без урахування пробілів/регістру
+      var keys = Object.keys(lead);
+      for (var k = 0; k < keys.length; k++) {
+        if (keys[k].trim().toLowerCase() === h.trim().toLowerCase()) return lead[keys[k]];
+      }
+      return '';
+    });
+    // Перевірка що рядок не повністю порожній
+    var hasData = row.some(function(v) { return String(v).trim() !== ''; });
+    if (hasData) {
+      sheet.appendRow(row);
+      added++;
+    }
   }
 
   // Інвалідуємо кеш маршруту щоб обидва CRM бачили актуальні дані
@@ -1915,7 +1930,7 @@ function apiAddToRoute(params) {
     cache.remove('routesList_v2');
   } catch(e) { /* ignore */ }
 
-  return { ok: true, added: leads.length };
+  return { ok: true, added: added };
 }
 
 /**
