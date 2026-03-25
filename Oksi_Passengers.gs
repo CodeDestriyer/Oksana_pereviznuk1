@@ -1685,31 +1685,26 @@ function apiGetRoutesList(params) {
     if (/^(Лог|Конфіг|Config|Log|Шаблон|Template)/i.test(sheetName)) continue;
 
     var lastRow = sheet.getLastRow();
-    var lastCol = sheet.getLastColumn();
     var rowCount = lastRow >= 2 ? lastRow - 1 : 0;
-    var paxCount = 0;
-    var parcelCount = 0;
 
-    if (rowCount > 0 && lastCol > 0) {
-      var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-      var typeColIdx = -1;
-      for (var h = 0; h < headers.length; h++) {
-        if (String(headers[h]).trim() === 'Тип запису') { typeColIdx = h; break; }
-      }
-      if (typeColIdx >= 0) {
-        var typeData = sheet.getRange(2, typeColIdx + 1, lastRow - 1, 1).getValues();
+    // Швидкий підрахунок: тільки для Маршрут_ аркушів з даними
+    var paxCount = 0, parcelCount = 0;
+    if (rowCount > 0 && sheetName.indexOf('Маршрут_') === 0) {
+      // Читаємо тільки колонку B (Тип запису) — один getRange замість двох
+      try {
+        var typeData = sheet.getRange(2, 2, rowCount, 1).getValues();
         for (var r = 0; r < typeData.length; r++) {
           var val = String(typeData[r][0] || '');
           if (val.indexOf('Пасажир') >= 0) paxCount++;
           else if (val.indexOf('Посилк') >= 0) parcelCount++;
         }
-      }
+      } catch(e) { /* аркуш може бути іншої структури */ }
     }
 
     result.push({ sheetName: sheetName, rowCount: rowCount, paxCount: paxCount, parcelCount: parcelCount });
   }
 
-  cache.put(cacheKey, JSON.stringify(result), 300); // кеш 5 хв
+  cache.put(cacheKey, JSON.stringify(result), 300);
   return { ok: true, data: result };
 }
 
@@ -1739,8 +1734,10 @@ function apiGetRouteSheet(params) {
     return { ok: true, data: { sheetName: sheetName, headers: [], rows: [], rowCount: 0 } };
   }
 
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
-  var dataRows = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  // Один getRange для всіх даних (заголовки + дані) — швидше ніж два окремих
+  var allData = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+  var headers = allData[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
+  var dataRows = allData.slice(1);
 
   var rows = [];
   for (var i = 0; i < dataRows.length; i++) {
