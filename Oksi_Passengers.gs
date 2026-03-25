@@ -1682,14 +1682,15 @@ function apiGetRoutesList(params) {
   for (var s = 0; s < allSheets.length; s++) {
     var sheet = allSheets[s];
     var sheetName = sheet.getName();
-    if (/^(Лог|Конфіг|Config|Log|Шаблон|Template)/i.test(sheetName)) continue;
+    // Тільки Маршрут_* аркуші, пропускаємо Відправка_, Витрати_, шаблони, логи
+    if (sheetName.indexOf('Маршрут_') !== 0) continue;
+    if (sheetName === 'Маршрут_Шаблон') continue;
 
     var lastRow = sheet.getLastRow();
     var rowCount = lastRow >= 2 ? lastRow - 1 : 0;
 
-    // Швидкий підрахунок: тільки для Маршрут_ аркушів з даними
     var paxCount = 0, parcelCount = 0;
-    if (rowCount > 0 && sheetName.indexOf('Маршрут_') === 0) {
+    if (rowCount > 0) {
       // Читаємо тільки колонку B (Тип запису) — один getRange замість двох
       try {
         var typeData = sheet.getRange(2, 2, rowCount, 1).getValues();
