@@ -5628,9 +5628,15 @@ function deleteTrip(calId, city, date) {
         showLoader('Видалення рейсу...');
         var res = await apiPost('deleteTrip', { cal_id: calId });
         if (!res.ok) { hideLoader(); showToast('❌ ' + (res.error || 'Невідома помилка')); return; }
-        // Чекаємо поки дані реально оновляться перед показом результату
-        showLoader('⏳ Оновлення списку...');
-        await silentSync(false, true);
+        // Видаляємо з локального масиву одразу
+        trips = trips.filter(t => t.cal_id !== calId && t.CAL_ID !== calId);
+        // Знімаємо CAL_ID у пасажирів що були на цьому рейсі
+        passengers.forEach(p => { if (p['CAL_ID'] === calId) p['CAL_ID'] = ''; });
+        // Перерендерюємо інтерфейс
+        updateAllCounts();
+        updateTripFilterDropdown();
+        if (currentView === 'trips') renderTrips();
+        else render();
         hideLoader();
         showToast('✅ Рейс видалено');
     });
