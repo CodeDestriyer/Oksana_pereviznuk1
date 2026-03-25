@@ -2,7 +2,7 @@
   "name": "Borispol Vip Travel CRM",
   "short_name": "BVT CRM",
   "description": "CRM Пасажири — Borispol Vip Travel",
-  "start_url": "./Pasanger_Oksi.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
