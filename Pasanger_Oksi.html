@@ -1370,12 +1370,14 @@
             <!-- Route bulk toolbar -->
             <div class="bulk-toolbar" id="routeBulkToolbar">
                 <span class="bulk-toolbar-count" id="routeBulkCount">0 обрано</span>
-                <button class="bulk-toolbar-btn select-all" onclick="toggleRouteSelectAll()">☑ Вибрати всі</button>
-                <button class="bulk-toolbar-btn" style="background:#f3f4f6;color:#6b7280;" onclick="routeBulkArchive()">📦 Архів</button>
-                <button class="bulk-toolbar-btn" style="background:#fee2e2;color:#dc2626;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
-                <button class="bulk-toolbar-btn" style="background:#7f1d1d;color:white;" onclick="routeBulkDeleteFull()">🗑️ Видалити</button>
-                <button class="bulk-toolbar-btn" style="background:#ede9fe;color:#7c3aed;" onclick="routeBulkTransfer()">🔄 Пересадити</button>
-                <button class="bulk-toolbar-btn cancel" onclick="clearRouteSelection()">✕ Скасувати</button>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                    <button class="bulk-toolbar-btn select-all" onclick="toggleRouteSelectAll()">☑ Вибрати всі</button>
+                    <button class="bulk-toolbar-btn cancel" onclick="clearRouteSelection()">✕ Скасувати</button>
+                    <button class="bulk-toolbar-btn" style="background:rgba(255,255,255,0.2);color:white;" onclick="routeBulkTransfer()">🔄 Перенести</button>
+                    <button class="bulk-toolbar-btn" style="background:rgba(255,255,255,0.2);color:white;" onclick="routeBulkArchive()">📦 Архів</button>
+                    <button class="bulk-toolbar-btn" style="background:#dc2626;color:white;" onclick="routeBulkDeleteFull()">🗑️ Видалити</button>
+                    <button class="bulk-toolbar-btn" style="background:#f87171;color:white;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
+                </div>
             </div>
             <div id="routesLoading" style="display:none;text-align:center;padding:40px;color:var(--text-secondary);font-size:13px;">⏳ Завантаження маршрутів...</div>
             <div id="routesError" style="display:none;text-align:center;padding:40px;color:#dc2626;font-size:13px;"></div>
