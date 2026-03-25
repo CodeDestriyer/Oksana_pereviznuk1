@@ -2581,6 +2581,14 @@ function renderRouteSidebar() {
     const pcLoading = document.getElementById('pcRoutesLoading');
     if (pcLoading) pcLoading.style.display = 'none';
 
+    // Рахуємо лічильники один раз і зберігаємо
+    routes.forEach(function(sheet) {
+        if (sheet.rows !== null) {
+            sheet.paxCount = sheet.rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
+            sheet.parcelCount = sheet.rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
+        }
+    });
+
     // PC sidebar
     const pcList = document.getElementById('pcRoutesList');
     if (pcList) {
@@ -2589,17 +2597,10 @@ function renderRouteSidebar() {
         } else {
             pcList.innerHTML = routes.map((sheet, idx) => {
                 const name = (sheet.sheetName || '').replace('Маршрут_', '');
-                const rows = sheet.rows;
-                const isLoaded = rows !== null;
                 const isActive = activeRouteIdx === idx && currentView === 'routes';
-                let countLabel = '';
-                if (isLoaded) {
-                    const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
-                    const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + pax + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + parcels + '</span>';
-                } else {
-                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
-                }
+                const pax = sheet.paxCount || 0;
+                const parcels = sheet.parcelCount || 0;
+                const countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + pax + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + parcels + '</span>';
                 return `<div class="pc-sidebar-item route-sidebar-item${isActive ? ' active' : ''}" onclick="openRoute(${idx})" style="position:relative;">
                     <span>
                         <span class="item-icon">🗺️</span>
@@ -2621,16 +2622,9 @@ function renderRouteSidebar() {
         } else {
             mobList.innerHTML = routes.map((sheet, idx) => {
                 const name = (sheet.sheetName || '').replace('Маршрут_', '');
-                const rows = sheet.rows;
-                const isLoaded = rows !== null;
-                let countLabel = '';
-                if (isLoaded) {
-                    const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
-                    const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + pax + '</span> 📦<span style="color:#f87171;font-weight:800;">' + parcels + '</span>';
-                } else {
-                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#f87171;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
-                }
+                const pax = sheet.paxCount || 0;
+                const parcels = sheet.parcelCount || 0;
+                const countLabel = '👤<span style="color:#f87171;font-weight:800;">' + pax + '</span> 📦<span style="color:#f87171;font-weight:800;">' + parcels + '</span>';
                 return `<div class="side-menu-item" onclick="openRoute(${idx}); closeSideMenu();" style="padding:8px 14px;font-size:12px;">
                     <span class="side-menu-item-left">🗺️ ${name}</span>
                     <span style="font-size:10px;letter-spacing:0.5px;">${countLabel}</span>
