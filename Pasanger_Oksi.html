@@ -898,12 +898,12 @@
         /* === BULK TOOLBAR: панель масових дій при виборі галочок ===
            Мобільна: плаваюча панель внизу екрану
            ПК (>901px): лівий сайдбар на всю висоту, 300px шириною */
-        .bulk-toolbar { position: fixed; bottom: 60px; left: 0; right: 0; background: var(--primary); color: white; padding: 10px 8px; border-radius: 0; z-index: 90; display: none; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); font-size: 12px; font-weight: 600; }
+        .bulk-toolbar { position: fixed; bottom: 60px; left: 0; right: 0; background: var(--primary); color: white; padding: 8px 6px; border-radius: 0; z-index: 90; display: none; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); font-size: 12px; font-weight: 600; }
         .bulk-toolbar.show { display: block; }
         .bulk-toolbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .bulk-toolbar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .bulk-toolbar-count { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-        .bulk-toolbar-btn { padding: 10px 6px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; min-height: 42px; width: 100%; text-align: center; }
+        .bulk-toolbar-count { background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .bulk-toolbar-btn { padding: 7px 4px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; min-height: 34px; width: 100%; text-align: center; }
         .bulk-toolbar-btn.select-all { background: rgba(255,255,255,0.2); color: white; }
         .bulk-toolbar-btn.select-all:hover { background: rgba(255,255,255,0.35); }
         .bulk-toolbar-btn.assign { background: var(--orange); color: white; }
@@ -1370,13 +1370,13 @@
             <!-- Route bulk toolbar -->
             <div class="bulk-toolbar" id="routeBulkToolbar">
                 <span class="bulk-toolbar-count" id="routeBulkCount">0 обрано</span>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;">
                     <button class="bulk-toolbar-btn select-all" onclick="toggleRouteSelectAll()">☑ Вибрати всі</button>
                     <button class="bulk-toolbar-btn cancel" onclick="clearRouteSelection()">✕ Скасувати</button>
-                    <button class="bulk-toolbar-btn" style="background:rgba(255,255,255,0.2);color:white;" onclick="routeBulkTransfer()">🔄 Перенести</button>
-                    <button class="bulk-toolbar-btn" style="background:rgba(255,255,255,0.2);color:white;" onclick="routeBulkArchive()">📦 Архів</button>
+                    <button class="bulk-toolbar-btn select-all" onclick="routeBulkTransfer()">🔄 Перенести</button>
+                    <button class="bulk-toolbar-btn select-all" onclick="routeBulkArchive()">📦 Архів</button>
                     <button class="bulk-toolbar-btn" style="background:#dc2626;color:white;" onclick="routeBulkDeleteFull()">🗑️ Видалити</button>
-                    <button class="bulk-toolbar-btn" style="background:#f87171;color:white;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
+                    <button class="bulk-toolbar-btn" style="background:rgba(220,38,38,0.5);color:white;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
                 </div>
             </div>
             <div id="routesLoading" style="display:none;text-align:center;padding:40px;color:var(--text-secondary);font-size:13px;">⏳ Завантаження маршрутів...</div>
