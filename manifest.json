@@ -1,8 +1,8 @@
 {
-  "name": "GrescoBus CRM",
-  "short_name": "GrescoBus",
-  "description": "CRM Пасажири — GrescoBus",
-  "start_url": "./Pasanger_Greskobus.html",
+  "name": "Borispol Vip Travel CRM",
+  "short_name": "BVT CRM",
+  "description": "CRM Пасажири — Borispol Vip Travel",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
