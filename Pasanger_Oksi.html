@@ -388,6 +388,14 @@
         .trip-filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: white; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; }
         .trip-filter-btn:hover { border-color: var(--orange); }
         .trip-filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+        /* Route filter section toggles */
+        .rte-section-toggle { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: #f8fafc; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; color: var(--text-secondary); }
+        .rte-section-toggle:hover { border-color: var(--primary); color: var(--primary); }
+        .rte-section-toggle.open { background: var(--primary); color: white; border-color: var(--primary); }
+        .rte-section-toggle.open span { display: inline-block; transform: rotate(90deg); }
+        .rte-filter-hidden { display: none !important; }
+        .rte-filter-visible { display: contents !important; }
         .trip-filter-btn.dir-ua-eu { border-color: #2563eb; color: #2563eb; font-weight: 800; }
         .trip-filter-btn.dir-ua-eu:hover { background: #dbeafe; }
         .trip-filter-btn.dir-ua-eu.active { background: #2563eb; color: white; border-color: #2563eb; }
@@ -1311,14 +1319,19 @@
         <!-- ROUTES VIEW -->
         <div class="routes-view" id="routesView" style="display:none;">
             <div id="routeHeaderBar" class="route-header-bar" style="display:none;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                    <div>
-                        <h2 id="routeViewTitle" style="margin:0;font-size:20px;font-weight:800;">🚐 Маршрут</h2>
-                        <div class="route-subtitle" id="routeSubtitle"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;" onclick="toggleRouteDashboard()">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <h2 id="routeViewTitle" style="margin:0;font-size:18px;font-weight:800;">🚐 Маршрут</h2>
+                        <span class="route-subtitle" id="routeSubtitle" style="margin:0;"></span>
                     </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span id="routeDashToggle" style="font-size:11px;opacity:0.6;transition:transform 0.3s;">▼</span>
+                    </div>
+                </div>
+                <div id="routeDashContent" style="display:none;margin-top:10px;">
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                        <button class="bs-btn" style="background:rgba(124,58,237,0.9);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(124,58,237,0.5);" onclick="optimizeRouteOrder()">⚡ Оптимізувати порядок</button>
-                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="loadRoutes(true)">🔄 Оновити</button>
+                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="event.stopPropagation();optimizeRouteOrder()">⚡ Оптимізувати порядок</button>
+                        <button class="bs-btn" style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:8px 14px;border:1px solid rgba(255,255,255,0.3);" onclick="event.stopPropagation();loadRoutes(true)">🔄 Оновити</button>
                     </div>
                 </div>
             </div>
@@ -1326,23 +1339,32 @@
                 <h2 style="margin:0;font-size:18px;color:var(--text-primary);">🗺️ Маршрути</h2>
                 <button class="bs-btn" style="background:var(--primary);color:white;font-size:11px;padding:8px 14px;" onclick="loadRoutes(true)">🔄 Оновити</button>
             </div>
-            <!-- Route filters -->
-            <div id="routeFiltersBar" style="display:none;margin-bottom:12px;">
-                <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
-                    <button class="trip-filter-btn active" id="rteFilterAll" onclick="setRouteTypeFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rteFilterPax" onclick="setRouteTypeFilter('pax',this)">👤 Пасажири</button>
-                    <button class="trip-filter-btn" id="rteFilterParcel" onclick="setRouteTypeFilter('parcel',this)">📦 Посилки</button>
-                    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
-                    <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="border-color:#f59e0b;color:#92400e;">Новий</button>
-                    <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
-                    <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="border-color:#10b981;color:#059669;">Підтверджено</button>
-                    <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="border-color:#ef4444;color:#dc2626;">Відмова</button>
-                    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
-                    <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="border-color:#ef4444;color:#dc2626;">Не оплачено</button>
-                    <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="border-color:#f59e0b;color:#92400e;">Частково</button>
-                    <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="border-color:#10b981;color:#059669;">Оплачено</button>
+            <!-- Route filters — 1 рядок + розгортальні секції -->
+            <div id="routeFiltersBar" style="display:none;margin-bottom:8px;">
+                <!-- Головний рядок: Всі | 👤 | 📦 | Статуси | Фінанси -->
+                <div style="display:flex;gap:5px;align-items:center;flex-wrap:nowrap;overflow-x:auto;padding:6px 0;">
+                    <button class="trip-filter-btn active" id="rteFilterAll" onclick="rteResetAll(this)" style="flex-shrink:0;">Всі</button>
+                    <button class="trip-filter-btn" id="rteFilterPax" onclick="setRouteTypeFilter('pax',this)" style="flex-shrink:0;">👤</button>
+                    <button class="trip-filter-btn" id="rteFilterParcel" onclick="setRouteTypeFilter('parcel',this)" style="flex-shrink:0;">📦</button>
+                    <button class="trip-filter-btn" id="rteToggleStatus" onclick="toggleRtePanel('status')" style="flex-shrink:0;">📋 Статуси</button>
+                    <button class="trip-filter-btn" id="rteTogglePay" onclick="toggleRtePanel('pay')" style="flex-shrink:0;">💰 Фінанси</button>
+                </div>
+                <!-- Статуси (згорнуті за замовчуванням) -->
+                <div id="rtePanelStatus" style="display:none;padding:6px 0;">
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                        <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="border-color:#f59e0b;color:#92400e;">🆕 Новий</button>
+                        <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="border-color:#3b82f6;color:#1d4ed8;">⚙️ В роботі</button>
+                        <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="border-color:#10b981;color:#059669;">✅ Підтверджено</button>
+                        <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="border-color:#ef4444;color:#dc2626;">❌ Відмова</button>
+                    </div>
+                </div>
+                <!-- Фінанси (згорнуті за замовчуванням) -->
+                <div id="rtePanelPay" style="display:none;padding:6px 0;">
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                        <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="border-color:#ef4444;color:#dc2626;">❌ Не оплачено</button>
+                        <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="border-color:#f59e0b;color:#92400e;">🟡 Частково</button>
+                        <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="border-color:#10b981;color:#059669;">💰 Оплачено</button>
+                    </div>
                 </div>
             </div>
             <!-- Route bulk toolbar -->
@@ -2568,9 +2590,9 @@ function renderRouteSidebar() {
                 if (isLoaded) {
                     const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
                     const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤' + pax + ' 📦' + parcels;
+                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + pax + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + parcels + '</span>';
                 } else {
-                    countLabel = '👤' + (sheet.paxCount || 0) + ' 📦' + (sheet.parcelCount || 0);
+                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
                 }
                 return `<div class="pc-sidebar-item route-sidebar-item${isActive ? ' active' : ''}" onclick="openRoute(${idx})" style="position:relative;">
                     <span>
@@ -2599,13 +2621,13 @@ function renderRouteSidebar() {
                 if (isLoaded) {
                     const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
                     const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤' + pax + ' 📦' + parcels;
+                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + pax + '</span> 📦<span style="color:#f87171;font-weight:800;">' + parcels + '</span>';
                 } else {
-                    countLabel = '👤' + (sheet.paxCount || 0) + ' 📦' + (sheet.parcelCount || 0);
+                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#f87171;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
                 }
                 return `<div class="side-menu-item" onclick="openRoute(${idx}); closeSideMenu();" style="padding:8px 14px;font-size:12px;">
                     <span class="side-menu-item-left">🗺️ ${name}</span>
-                    <span style="font-size:10px;opacity:0.8;">${countLabel}</span>
+                    <span style="font-size:10px;letter-spacing:0.5px;">${countLabel}</span>
                 </div>`;
             }).join('') + `<div class="side-menu-item" onclick="promptCreateRoute(); closeSideMenu();" style="color:#7c3aed;padding:8px 14px;font-size:12px;">
                 <span class="side-menu-item-left">➕ Новий маршрут</span>
@@ -2632,23 +2654,72 @@ async function openRoute(idx) {
     showRoutesView();
 }
 
+// ── Згортальний дашборд маршруту ──
+function toggleRouteDashboard() {
+    var content = document.getElementById('routeDashContent');
+    var toggle = document.getElementById('routeDashToggle');
+    if (!content) return;
+    var isOpen = content.style.display !== 'none';
+    content.style.display = isOpen ? 'none' : 'block';
+    if (toggle) toggle.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// ── Розгортальні секції фільтрів (Статуси / Фінанси) ──
+function toggleRteFilterSection(section, btn) {
+    var id = section === 'status' ? 'rteStatusFilters' : 'rtePayFilters';
+    var el = document.getElementById(id);
+    if (!el) return;
+    var isHidden = el.classList.contains('rte-filter-hidden');
+    el.classList.toggle('rte-filter-hidden', !isHidden);
+    el.classList.toggle('rte-filter-visible', isHidden);
+    btn.classList.toggle('open', isHidden);
+}
+
 // ── Фільтри маршруту ──
 function setRouteTypeFilter(val, btn) {
     routeTypeFilter = val;
     document.querySelectorAll('#rteFilterAll,#rteFilterPax,#rteFilterParcel').forEach(b => b.classList.remove('active'));
+    document.getElementById('rteFilterAll')?.classList.remove('active');
     if (btn) btn.classList.add('active');
     renderRoutes();
 }
 function setRouteStatusFilter(val, btn) {
     routeStatusFilter = val;
-    document.querySelectorAll('#rteStatusAll,#rteStatusNew,#rteStatusWork,#rteStatusConfirmed,#rteStatusRefused').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#rteStatusNew,#rteStatusWork,#rteStatusConfirmed,#rteStatusRefused').forEach(b => b.classList.remove('active'));
+    document.getElementById('rteFilterAll')?.classList.remove('active');
+    document.getElementById('rteToggleStatus')?.classList.add('active');
     if (btn) btn.classList.add('active');
     renderRoutes();
 }
 function setRoutePayFilter(val, btn) {
     routePayFilter = val;
-    document.querySelectorAll('#rtePayAll,#rtePayUnpaid,#rtePayPartial,#rtePayPaid').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#rtePayUnpaid,#rtePayPartial,#rtePayPaid').forEach(b => b.classList.remove('active'));
+    document.getElementById('rteFilterAll')?.classList.remove('active');
+    document.getElementById('rteTogglePay')?.classList.add('active');
     if (btn) btn.classList.add('active');
+    renderRoutes();
+}
+function toggleRtePanel(panel) {
+    var statusEl = document.getElementById('rtePanelStatus');
+    var payEl = document.getElementById('rtePanelPay');
+    if (panel === 'status') {
+        var isOpen = statusEl.style.display !== 'none';
+        statusEl.style.display = isOpen ? 'none' : 'block';
+        if (payEl) payEl.style.display = 'none';
+    } else {
+        var isOpen = payEl.style.display !== 'none';
+        payEl.style.display = isOpen ? 'none' : 'block';
+        if (statusEl) statusEl.style.display = 'none';
+    }
+}
+function rteResetAll(btn) {
+    routeTypeFilter = 'all'; routeStatusFilter = 'all'; routePayFilter = 'all';
+    document.querySelectorAll('#rteFilterAll,#rteFilterPax,#rteFilterParcel,#rteToggleStatus,#rteTogglePay').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#rteStatusNew,#rteStatusWork,#rteStatusConfirmed,#rteStatusRefused').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#rtePayUnpaid,#rtePayPartial,#rtePayPaid').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    var s = document.getElementById('rtePanelStatus'); if (s) s.style.display = 'none';
+    var p = document.getElementById('rtePanelPay'); if (p) p.style.display = 'none';
     renderRoutes();
 }
 function getFilteredRouteRows(rows) {
