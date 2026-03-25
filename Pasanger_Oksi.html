@@ -2596,7 +2596,7 @@ function renderRouteSidebar() {
                 const isActive = activeRouteIdx === idx && currentView === 'routes';
                 const pax = sheet.paxCount || 0;
                 const parcels = sheet.parcelCount || 0;
-                const countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + pax + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + parcels + '</span>';
+                const countLabel = '👤<span style="color:#d97706;font-weight:800;">' + pax + '</span> 📦<span style="color:#d97706;font-weight:800;">' + parcels + '</span>';
                 return `<div class="pc-sidebar-item route-sidebar-item${isActive ? ' active' : ''}" onclick="openRoute(${idx})" style="position:relative;">
                     <span>
                         <span class="item-icon">🗺️</span>
@@ -2620,7 +2620,7 @@ function renderRouteSidebar() {
                 const name = (sheet.sheetName || '').replace('Маршрут_', '');
                 const pax = sheet.paxCount || 0;
                 const parcels = sheet.parcelCount || 0;
-                const countLabel = '👤<span style="color:#f87171;font-weight:800;">' + pax + '</span> 📦<span style="color:#f87171;font-weight:800;">' + parcels + '</span>';
+                const countLabel = '👤<span style="color:#fbbf24;font-weight:800;">' + pax + '</span> 📦<span style="color:#fbbf24;font-weight:800;">' + parcels + '</span>';
                 return `<div class="side-menu-item" onclick="openRoute(${idx}); closeSideMenu();" style="padding:8px 14px;font-size:12px;">
                     <span class="side-menu-item-left">🗺️ ${name}</span>
                     <span style="font-size:10px;letter-spacing:0.5px;">${countLabel}</span>
@@ -2640,14 +2640,21 @@ function toggleMobileRoutesList() {
 var _routeForceRefresh = false;
 async function openRoute(idx, forceRefresh) {
     activeRouteIdx = idx;
+    // Одразу підсвітити активний маршрут в sidebar
+    document.querySelectorAll('.route-sidebar-item').forEach(function(el, i) {
+        el.classList.toggle('active', i === idx);
+    });
     var needForce = forceRefresh || _routeForceRefresh;
     _routeForceRefresh = false;
     // Lazy load: завантажити дані аркуша, якщо ще не завантажені або force
     try {
         if (routes[idx] && (routes[idx].rows === null || needForce)) {
+            showLoader('Завантаження маршруту...');
             await loadRouteSheetData(idx, needForce);
+            hideLoader();
         }
     } catch(e) {
+        hideLoader();
         showToast('❌ Помилка завантаження маршруту: ' + (e.message || ''));
     }
     showRoutesView();
@@ -4955,7 +4962,7 @@ function renderCalDay(d, key, info, otherMonth, isToday, selectedKey) {
         } else if (info.euua > 0) {
             dotsHtml = '<span class="dot-eu-ua"></span>';
         }
-        const paxStyle = info.overbooked ? ' style="color:#dc2626;font-weight:800;"' : '';
+        const paxStyle = info.overbooked ? ' style="color:#d97706;font-weight:800;"' : '';
         paxHtml = `<span class="tcal-pax"${paxStyle} onclick="event.stopPropagation();showTripPassengersByDate('${key}')" title="Пасажири">${info.pax}</span>`;
     }
 
