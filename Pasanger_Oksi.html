@@ -636,13 +636,12 @@
         .pax-cal-day.today { border-color: var(--primary); }
         .pax-cal-day.selected { background: var(--primary); border-color: var(--primary); }
         .pax-cal-day.selected .pax-cal-num { color: white; }
-        .pax-cal-day.selected .pax-cal-badge { background: white; color: var(--primary); }
+        .pax-cal-day.selected .pax-cal-badge { background: white; color: #dc2626; }
         .pax-cal-num { font-size: 11px; font-weight: 600; color: var(--text-primary); line-height: 1; }
         .pax-cal-badge {
-            font-size: 8px; font-weight: 800; background: var(--primary); color: white;
+            font-size: 8px; font-weight: 800; background: #dc2626; color: white;
             border-radius: 8px; padding: 1px 5px; margin-top: 1px; min-width: 16px; text-align: center; line-height: 1.3;
         }
-        .pax-cal-badge.zero { background: transparent; color: transparent; }
         .pax-cal-reset { width: 100%; margin-top: 6px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px; background: white; font-size: 10px; font-weight: 600; cursor: pointer; color: var(--text-secondary); font-family: inherit; transition: all 0.15s; }
         .pax-cal-reset:hover { border-color: var(--primary); color: var(--primary); }
 
@@ -658,8 +657,8 @@
         .side-menu .pax-cal-day.selected { background: #2563eb; border-color: #2563eb; }
         .side-menu .pax-cal-num { color: rgba(255,255,255,0.9); }
         .side-menu .pax-cal-day.selected .pax-cal-num { color: white; }
-        .side-menu .pax-cal-badge { background: #60a5fa; color: #0f172a; }
-        .side-menu .pax-cal-day.selected .pax-cal-badge { background: white; color: #2563eb; }
+        .side-menu .pax-cal-badge { background: #dc2626; color: white; }
+        .side-menu .pax-cal-day.selected .pax-cal-badge { background: white; color: #dc2626; }
         .side-menu .pax-cal-dir-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
         .side-menu .pax-cal-dir-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
         .side-menu .pax-cal-reset { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
@@ -5796,7 +5795,7 @@ function renderPaxCalendar() {
         var cnt = dateCounts[dateStr] || 0;
         html += '<div class="pax-cal-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="selectPaxCalDate(\'' + dateStr + '\')">';
         html += '<span class="pax-cal-num">' + d + '</span>';
-        html += '<span class="pax-cal-badge' + (cnt === 0 ? ' zero' : '') + '">' + cnt + '</span>';
+        if (cnt > 0) html += '<span class="pax-cal-badge">' + cnt + '</span>';
         html += '</div>';
     }
     html += '</div>';
