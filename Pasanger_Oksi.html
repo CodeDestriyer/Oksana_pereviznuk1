@@ -3162,8 +3162,10 @@ async function doTransferRouteLead(rteId, fromSheet, toSheet) {
     hideLoader();
     if (delRes.ok) {
         sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
+        routeSelectedIds.delete(rteId);
+        renderRouteSidebar();
+        renderRoutes();
         showToast('✅ Пересаджено в ' + toSheet.replace('Маршрут_', ''));
-        loadRoutes();
     } else {
         showToast('⚠️ Додано в новий маршрут, але не видалено зі старого');
     }
@@ -3202,8 +3204,11 @@ async function doBulkTransfer(toSheet) {
     }
     hideLoader();
     routeSelectedIds.clear();
+    _routeToolbarForceOpen = false;
+    updateRouteBulkToolbar();
+    renderRouteSidebar();
+    renderRoutes();
     showToast('✅ Пересаджено: ' + ok + ' в ' + toSheet.replace('Маршрут_', ''));
-    loadRoutes();
 }
 
 // ── Створення нового маршруту ──
@@ -7111,10 +7116,15 @@ async function reorderRouteAfterOptimize() {
         });
         await apiPost('addToRoute', { sheetName, leads: leadsData });
 
+        // Перезавантажуємо дані маршруту з сервера (forceRefresh)
+        if (activeRouteIdx !== null && routes[activeRouteIdx]) {
+            routes[activeRouteIdx].rows = null;
+            await loadRouteSheetData(activeRouteIdx, true);
+        }
         hideLoader();
+        renderRoutes();
         showToast('✅ Порядок в маршруті оновлено!');
         window._optimizeRouteContext = null;
-        loadRoutes();
     } catch (e) {
         hideLoader();
         showToast('❌ Помилка: ' + e.message);
