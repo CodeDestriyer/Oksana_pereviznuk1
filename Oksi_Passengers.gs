@@ -870,22 +870,18 @@ function updateCalendarOccupancy(calId) {
 // 5. PASSENGERS — DELETE / ARCHIVE
 // ══════════════════════════════════════════════════════════════
 
-// deletePassenger — Повне видалення
+// deletePassenger — Архівує з позначкою "Видалено" (soft delete)
 function apiDeletePassenger(params) {
-  var shName = resolveSheet(params);
-  var sh = getSheet(shName);
-  if (!sh) return { ok: false, error: 'Аркуш не знайдено' };
-  var found = findRow(sh, 'PAX_ID', params.pax_id);
-  if (!found) return { ok: false, error: 'Запис не знайдено' };
+  // Soft delete — архівуємо замість фізичного видалення
+  var result = apiArchivePassenger({
+    pax_id: params.pax_id,
+    pax_ids: params.pax_ids || [],
+    reason: 'Видалено',
+    archived_by: params.manager || params.archived_by || 'Менеджер',
+    sheet: params.sheet
+  });
 
-  var obj = rowToObj(found.headers, found.data);
-  var calId = obj['CAL_ID'];
-
-  sh.deleteRow(found.rowNum);
-
-  if (calId) updateCalendarOccupancy(calId);
-
-  return { ok: true };
+  return { ok: result.ok, message: result.ok ? 'Пасажира переміщено в архів з позначкою "Видалено"' : result.error };
 }
 
 // bulkDelete — Масове видалення (soft delete — архівує з позначкою "Видалено")
