@@ -7777,26 +7777,9 @@ function obFinish(completed) {
 function checkOnboardingAutoStart() { }
 </script>
 
-<!-- VIDEO MODAL -->
-<div id="videoModalOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;" onclick="if(event.target===this)closeVideoModal()">
-    <div style="background:white;border-radius:16px;width:94%;max-width:720px;overflow:hidden;animation:rteModalUp 0.25s ease;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--primary);color:white;">
-            <span style="font-size:14px;font-weight:800;">📹 Навчання — Borispol Vip Travel CRM</span>
-            <button onclick="closeVideoModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer;">×</button>
-        </div>
-        <div style="padding:0;position:relative;width:100%;padding-bottom:56.25%;height:0;">
-            <iframe id="videoIframe" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="" allow="autoplay;encrypted-media" allowfullscreen></iframe>
-        </div>
-    </div>
-</div>
 <script>
 function openVideoModal() {
-    document.getElementById('videoIframe').src = 'https://www.youtube.com/embed/dXhlCFwPJiY?rel=0&autoplay=1';
-    document.getElementById('videoModalOverlay').style.display = 'flex';
-}
-function closeVideoModal() {
-    document.getElementById('videoIframe').src = '';
-    document.getElementById('videoModalOverlay').style.display = 'none';
+    window.open('https://youtu.be/dXhlCFwPJiY', '_blank');
 }
 </script>
 </body>
