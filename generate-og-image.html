@@ -2,25 +2,106 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Генератор OG Image</title>
+    <title>Генератор іконок — Borispol Vip Travel</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #f0f0f0; font-family: Montserrat, sans-serif; margin: 0; }
-        canvas { border: 1px solid #ccc; max-width: 90vw; }
-        button { margin-top: 20px; padding: 16px 40px; font-size: 18px; font-weight: 700; background: #1a3a5e; color: white; border: none; border-radius: 12px; cursor: pointer; font-family: inherit; }
-        button:hover { background: #0d1f3c; }
-        p { color: #666; margin-top: 12px; font-size: 14px; }
+        * { box-sizing: border-box; margin: 0; }
+        body { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; background: #f0f2f5; font-family: Montserrat, sans-serif; }
+        h1 { font-size: 22px; color: #1a3a5e; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 13px; margin-bottom: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; margin-bottom: 30px; }
+        .card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+        .card h3 { font-size: 14px; color: #1a3a5e; margin-bottom: 4px; }
+        .card p { font-size: 11px; color: #888; margin-bottom: 12px; }
+        .card canvas { border: 1px solid #e2e8f0; border-radius: 8px; max-width: 100%; }
+        .btn { display: inline-block; margin-top: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; background: #1a3a5e; color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
+        .btn:hover { background: #0d1f3c; }
+        .btn-all { padding: 16px 40px; font-size: 16px; background: #d90d0d; border-radius: 12px; }
+        .btn-all:hover { background: #b00b0b; }
+        .og-wrap { width: 100%; max-width: 1000px; background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; margin-bottom: 30px; }
+        .og-wrap canvas { max-width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .note { color: #888; font-size: 12px; margin-top: 20px; max-width: 600px; text-align: center; line-height: 1.6; }
     </style>
 </head>
 <body>
-    <h2>OG Image Preview (1200×630)</h2>
-    <canvas id="c" width="1200" height="630"></canvas>
-    <button onclick="download()">⬇ Завантажити og-image.png</button>
-    <p>Після завантаження — закинь файл на хостинг поруч з Pasanger_Oksi.html</p>
+
+<h1>Генератор іконок Borispol Vip Travel</h1>
+<p class="subtitle">Натисни кнопку — скачаєш всі файли одразу</p>
+
+<div class="grid">
+    <div class="card">
+        <h3>icon-180.png</h3>
+        <p>Apple Touch Icon (iPhone)</p>
+        <canvas id="icon180" width="180" height="180"></canvas>
+        <br><button class="btn" onclick="dl('icon180','icon-180.png')">⬇ Скачати</button>
+    </div>
+    <div class="card">
+        <h3>icon-192.png</h3>
+        <p>Android / PWA іконка</p>
+        <canvas id="icon192" width="192" height="192"></canvas>
+        <br><button class="btn" onclick="dl('icon192','icon-192.png')">⬇ Скачати</button>
+    </div>
+    <div class="card">
+        <h3>icon-512.png</h3>
+        <p>PWA Splash / Store</p>
+        <canvas id="icon512" width="512" height="512"></canvas>
+        <br><button class="btn" onclick="dl('icon512','icon-512.png')">⬇ Скачати</button>
+    </div>
+</div>
+
+<div class="og-wrap">
+    <h3 style="margin-bottom:4px;">og-image.png</h3>
+    <p style="font-size:11px;color:#888;margin-bottom:12px;">Прев'ю для Telegram / WhatsApp / Viber (1200×630)</p>
+    <canvas id="ogImage" width="1200" height="630"></canvas>
+    <br><button class="btn" onclick="dl('ogImage','og-image.png')" style="margin-top:12px;">⬇ Скачати</button>
+</div>
+
+<button class="btn btn-all" onclick="downloadAll()">⬇ Скачати всі 4 файли</button>
+
+<p class="note">
+    Після завантаження — закинь всі файли на хостинг в папку з Pasanger_Oksi.html:<br>
+    <b>icon-180.png, icon-192.png, icon-512.png, og-image.png</b>
+</p>
 
 <script>
-function draw() {
-    var c = document.getElementById('c');
+// ── Іконка (квадратна) ──
+function drawIcon(canvasId, size) {
+    var c = document.getElementById(canvasId);
+    var ctx = c.getContext('2d');
+
+    // Фон — суцільний (RGB, без прозорості для iOS)
+    ctx.fillStyle = '#1a3a5e';
+    ctx.fillRect(0, 0, size, size);
+
+    // Заокруглені кути поверх (маска)
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, size, size, size * 0.18);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Автобус емодзі
+    ctx.font = (size * 0.32) + 'px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚐', size / 2, size * 0.35);
+
+    // BORISPOL
+    ctx.fillStyle = 'white';
+    ctx.font = '800 ' + (size * 0.15) + 'px Montserrat, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('BORISPOL', size / 2, size * 0.62);
+
+    // VIP TRAVEL
+    ctx.fillStyle = '#d90d0d';
+    ctx.font = '800 ' + (size * 0.12) + 'px Montserrat, Arial, sans-serif';
+    ctx.fillText('VIP TRAVEL', size / 2, size * 0.80);
+}
+
+// ── OG Image (1200×630) ──
+function drawOG() {
+    var c = document.getElementById('ogImage');
     var ctx = c.getContext('2d');
     var W = 1200, H = 630;
 
@@ -29,9 +110,7 @@ function draw() {
     grad.addColorStop(0, '#1a3a5e');
     grad.addColorStop(1, '#0d1f3c');
     ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.roundRect(0, 0, W, H, 0);
-    ctx.fill();
+    ctx.fillRect(0, 0, W, H);
 
     // Декоративні кола
     ctx.fillStyle = 'rgba(255,255,255,0.03)';
@@ -42,42 +121,60 @@ function draw() {
     ctx.fillStyle = '#d90d0d';
     ctx.fillRect(0, 0, W, 6);
 
-    // Емодзі автобус
+    // Автобус емодзі
     ctx.font = '120px serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🚐', 600, 200);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚐', 600, 180);
 
-    // Назва компанії
+    // BORISPOL
     ctx.fillStyle = 'white';
     ctx.font = '900 72px Montserrat, Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('BORISPOL', 600, 330);
+    ctx.fillText('BORISPOL', 600, 320);
 
+    // VIP TRAVEL
     ctx.fillStyle = '#d90d0d';
     ctx.font = '800 56px Montserrat, Arial, sans-serif';
-    ctx.fillText('VIP TRAVEL', 600, 410);
+    ctx.fillText('VIP TRAVEL', 600, 400);
 
     // Підпис
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '600 28px Montserrat, Arial, sans-serif';
-    ctx.fillText('CRM Пасажири', 600, 500);
+    ctx.fillText('CRM Пасажири', 600, 490);
 
     // Лінія знизу
     ctx.fillStyle = '#d90d0d';
     ctx.fillRect(0, H - 6, W, 6);
 }
 
-function download() {
-    var c = document.getElementById('c');
-    var link = document.createElement('a');
-    link.download = 'og-image.png';
-    link.href = c.toDataURL('image/png');
-    link.click();
+// ── Download helpers ──
+function dl(canvasId, filename) {
+    var c = document.getElementById(canvasId);
+    var a = document.createElement('a');
+    a.download = filename;
+    a.href = c.toDataURL('image/png');
+    a.click();
 }
 
-// Чекаємо шрифт
-document.fonts.ready.then(draw);
+function downloadAll() {
+    var files = [
+        ['icon180', 'icon-180.png'],
+        ['icon192', 'icon-192.png'],
+        ['icon512', 'icon-512.png'],
+        ['ogImage', 'og-image.png']
+    ];
+    files.forEach(function(f, i) {
+        setTimeout(function() { dl(f[0], f[1]); }, i * 300);
+    });
+}
+
+// Чекаємо шрифт Montserrat і малюємо все
+document.fonts.ready.then(function() {
+    drawIcon('icon180', 180);
+    drawIcon('icon192', 192);
+    drawIcon('icon512', 512);
+    drawOG();
+});
 </script>
 </body>
 </html>
