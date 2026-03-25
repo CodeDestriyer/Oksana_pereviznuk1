@@ -3095,7 +3095,7 @@ async function deleteFromRoute(rteId, sheetName, leadName) {
     showConfirm('Видалити «' + leadName + '» з маршруту?', async (yes) => {
         if (!yes) return;
         showLoader('Видалення з маршруту...');
-        const res = await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
+        const res = await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
         hideLoader();
         if (res.ok) {
             const sheet = routes[activeRouteIdx];
@@ -3119,7 +3119,7 @@ async function routeBulkDeleteFromRoute() {
         showLoader('Видалення...');
         let ok = 0, fail = 0;
         for (const rteId of routeSelectedIds) {
-            const res = await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+            const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
             if (res.ok) { ok++; sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId); }
             else fail++;
         }
@@ -3196,7 +3196,7 @@ async function doBulkTransfer(toSheet) {
 
     let ok = 0;
     for (const rteId of routeSelectedIds) {
-        const res = await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+        const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
         if (res.ok) { ok++; sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId); }
     }
     hideLoader();
@@ -7092,7 +7092,7 @@ async function reorderRouteAfterOptimize() {
     try {
         // Видалити всіх пасажирів
         for (const r of paxRows) {
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: r['RTE_ID'] });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: r['RTE_ID'] });
         }
 
         // Додати заново в оптимізованому порядку
@@ -7402,7 +7402,7 @@ async function archiveFromRoute(rteId, sheetName, leadName) {
             // 1. Архівувати в CRM (фізично переносить в Archive_crm_v3)
             await apiPost('archivePassenger', { pax_ids: [rteId], reason: 'Архівовано з маршруту', archived_by: 'Менеджер' });
             // 2. Видалити з маршруту
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
             hideLoader();
             showToast('✅ Архівовано і видалено з маршруту');
             passengers = passengers.filter(x => x['PAX_ID'] !== rteId);
@@ -7422,9 +7422,9 @@ async function deleteFromRouteFull(rteId, sheetName, leadName) {
         showLoader('Видалення...');
         try {
             // 1. Видалити з маршруту
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
             // 2. Архівувати з CRM (soft delete — зберігаємо в архіві з позначкою "Видалено")
-            await apiPost('archivePassenger', { pax_ids: [rteId], reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
+            await apiPost('deletePassenger', { pax_ids: [rteId], reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
             passengers = passengers.filter(x => x['PAX_ID'] !== rteId);
             hideLoader();
             showToast('✅ Видалено з маршруту (збережено в архіві)');
@@ -7448,9 +7448,9 @@ function routeBulkArchive() {
         if (!sheet) return;
         showLoader('Архівування...');
         try {
-            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Масове архівування з маршруту', archived_by: 'Менеджер' });
+            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Архівовано з маршруту', archived_by: 'Менеджер' });
             for (const rteId of ids) {
-                await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+                await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
             }
             passengers = passengers.filter(x => !ids.includes(x['PAX_ID']));
             hideLoader();
@@ -7477,10 +7477,10 @@ function routeBulkDeleteFull() {
         showLoader('Видалення...');
         try {
             for (const rteId of ids) {
-                await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+                await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
             }
             // Архівувати з CRM (soft delete)
-            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
+            await apiPost('deletePassenger', { pax_ids: ids, reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
             passengers = passengers.filter(x => !ids.includes(x['PAX_ID']));
             hideLoader();
             showToast('✅ Видалено ' + ids.length + ' записів (збережено в архіві)');

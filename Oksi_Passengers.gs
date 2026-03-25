@@ -884,6 +884,21 @@ function apiDeletePassenger(params) {
   return { ok: result.ok, message: result.ok ? 'Пасажира переміщено в архів з позначкою "Видалено"' : result.error };
 }
 
+// deleteFromSheet — Фізичне видалення рядка з аркуша (для маршрутів)
+function apiDeleteFromSheet(params) {
+  var shName = params.sheet;
+  if (!shName) return { ok: false, error: 'sheet не вказано' };
+  var sh = getSheet(shName);
+  if (!sh) return { ok: false, error: 'Аркуш не знайдено: ' + shName };
+  var idCol = params.id_col || 'RTE_ID';
+  var idVal = params.id_val || params.pax_id || params.rte_id;
+  if (!idVal) return { ok: false, error: 'ID не вказано' };
+  var found = findRow(sh, idCol, idVal);
+  if (!found) return { ok: false, error: 'Запис не знайдено' };
+  sh.deleteRow(found.rowNum);
+  return { ok: true };
+}
+
 // bulkDelete — Масове видалення (soft delete — архівує з позначкою "Видалено")
 function apiBulkDelete(params) {
   var paxIds = params.pax_ids || [];
@@ -2157,6 +2172,7 @@ function doPost(e) {
 
       // ── PASSENGERS DELETE/ARCHIVE ──
       case 'deletePassenger':    result = apiDeletePassenger(body); break;
+      case 'deleteFromSheet':    result = apiDeleteFromSheet(body); break;
       case 'bulkDelete':         result = apiBulkDelete(body); break;
       case 'archivePassenger':   result = apiArchivePassenger(body); break;
       case 'restorePassenger':   result = apiRestorePassenger(body); break;
