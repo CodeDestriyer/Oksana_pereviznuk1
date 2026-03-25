@@ -1341,26 +1341,35 @@
             </div>
             <!-- Route filters -->
             <div id="routeFiltersBar" style="display:none;margin-bottom:12px;">
-                <!-- Рядок 1: Тип запису -->
-                <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+                <!-- Тип запису -->
+                <div style="display:flex;gap:5px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
                     <button class="trip-filter-btn active" id="rteFilterAll" onclick="setRouteTypeFilter('all',this)">Всі</button>
                     <button class="trip-filter-btn" id="rteFilterPax" onclick="setRouteTypeFilter('pax',this)">👤 Пасажири</button>
                     <button class="trip-filter-btn" id="rteFilterParcel" onclick="setRouteTypeFilter('parcel',this)">📦 Посилки</button>
                 </div>
-                <!-- Рядок 2: Статуси -->
-                <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
-                    <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="border-color:#f59e0b;color:#92400e;">Новий</button>
-                    <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
-                    <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="border-color:#10b981;color:#059669;">Підтверджено</button>
-                    <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="border-color:#ef4444;color:#dc2626;">Відмова</button>
-                </div>
-                <!-- Рядок 3: Фінанси -->
-                <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">
-                    <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="border-color:#ef4444;color:#dc2626;">Не оплачено</button>
-                    <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="border-color:#f59e0b;color:#92400e;">Частково</button>
-                    <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="border-color:#10b981;color:#059669;">Оплачено</button>
+                <!-- Статус + Фінанси в одному блоці -->
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <!-- Статус -->
+                    <div style="flex:1;min-width:200px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
+                        <div style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📋 Статус</div>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                            <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)" style="padding:5px 10px;font-size:10px;">Всі</button>
+                            <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="padding:5px 10px;font-size:10px;border-color:#f59e0b;color:#92400e;">Новий</button>
+                            <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="padding:5px 10px;font-size:10px;border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
+                            <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="padding:5px 10px;font-size:10px;border-color:#10b981;color:#059669;">Підтверджено</button>
+                            <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="padding:5px 10px;font-size:10px;border-color:#ef4444;color:#dc2626;">Відмова</button>
+                        </div>
+                    </div>
+                    <!-- Фінанси -->
+                    <div style="flex:1;min-width:200px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
+                        <div style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">💰 Оплата</div>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                            <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)" style="padding:5px 10px;font-size:10px;">Всі</button>
+                            <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="padding:5px 10px;font-size:10px;border-color:#ef4444;color:#dc2626;">Не оплачено</button>
+                            <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="padding:5px 10px;font-size:10px;border-color:#f59e0b;color:#92400e;">Частково</button>
+                            <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="padding:5px 10px;font-size:10px;border-color:#10b981;color:#059669;">Оплачено</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Route bulk toolbar -->
