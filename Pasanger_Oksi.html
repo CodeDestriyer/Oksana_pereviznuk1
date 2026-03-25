@@ -5813,6 +5813,8 @@ function selectPaxCalDate(dateStr) {
         paxCalSelectedDate = null;
     } else {
         paxCalSelectedDate = dateStr;
+        // На мобільному — закрити бокове меню щоб одразу бачити пасажирів
+        if (window.innerWidth <= 900) closeSideMenu();
     }
     renderPaxCalendar();
     render();
