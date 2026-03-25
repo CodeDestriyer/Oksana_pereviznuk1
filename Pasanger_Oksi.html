@@ -5607,11 +5607,13 @@ function archiveTrip(calId, city, date) {
         showLoader('Архівування рейсу...');
         var res = await apiPost('archiveTrip', { cal_id: calId });
         if (!res.ok) { hideLoader(); showToast('❌ ' + (res.error || '')); return; }
-        // Після API — оновлюємо дані з сервера перш ніж показати результат
-        var tripRes = await apiPost('getTrips', { filter: {} });
-        if (tripRes.ok) trips = tripRes.data;
-        renderTrips();
+        // Видаляємо з локального масиву одразу
+        trips = trips.filter(t => t.cal_id !== calId && t.CAL_ID !== calId);
+        passengers.forEach(p => { if (p['CAL_ID'] === calId) p['CAL_ID'] = ''; });
         updateAllCounts();
+        updateTripFilterDropdown();
+        if (currentView === 'trips') renderTrips();
+        else render();
         hideLoader();
         showToast('✅ Рейс архівовано');
     });
