@@ -2335,7 +2335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadRoutes();
     }).catch(() => { hideLoader(); render(); });
 
-    setInterval(silentSync, 60000);
+    setInterval(silentSync, 30000);
 
     // Автозапуск навчання якщо вже залогінений і ще не проходив
     checkOnboardingAutoStart();
