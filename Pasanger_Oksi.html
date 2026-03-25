@@ -373,7 +373,7 @@
         .route-card-details .detail-block { border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
         .route-card-details .detail-block-label { font-size:9px; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:2px; }
         .route-card-details .detail-block-value { font-size:12px; font-weight:600; color:var(--text-primary); }
-        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:12px; padding:14px 18px; margin-bottom:0; position:sticky; top:52px; z-index:20; }
+        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:0 0 12px 12px; padding:14px 18px; margin:-16px -16px 0 -16px; position:sticky; top:52px; z-index:20; }
         .route-header-bar h2 { margin:0; font-size:18px; font-weight:800; }
         .route-header-bar .route-subtitle { font-size:11px; opacity:0.85; }
         .route-card.selected { background:#f0f7ff; border-left-color:var(--primary); }
@@ -389,35 +389,36 @@
         .trip-filter-btn:hover { border-color: var(--orange); }
         .trip-filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
 
-        /* ── Smart Route Filters ── */
-        .rte-filters-wrap { position:sticky; top:104px; z-index:19; background:var(--bg-main); padding:8px 0; margin-bottom:8px; }
-        .rte-chip { display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s ease; font-family:inherit; border:none; }
-        .rte-chip:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-        .rte-chip-status { background:#dbeafe; color:#1d4ed8; }
-        .rte-chip-pay { background:#fef3c7; color:#92400e; }
-        .rte-chip-expand { background:var(--primary); color:white; }
-        .rte-chip-reset { background:#fee2e2; color:#dc2626; font-size:10px; padding:5px 10px; }
-        .rte-chip-reset:hover { background:#dc2626; color:white; }
-        .rte-filters-expanded { animation:rteSlide 0.25s ease; }
-        @keyframes rteSlide { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-        .rte-filter-label { font-size:9px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
-        .rte-filter-row { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
-        .rte-fbtn { padding:6px 12px; border:1.5px solid var(--border); border-radius:20px; background:white; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.2s; display:inline-flex; align-items:center; gap:3px; }
-        .rte-fbtn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
-        .rte-fbtn.s-new { border-color:#9ca3af; color:#6b7280; }
-        .rte-fbtn.s-new.active { background:#6b7280; color:white; border-color:#6b7280; }
-        .rte-fbtn.s-work { border-color:#3b82f6; color:#1d4ed8; }
-        .rte-fbtn.s-work.active { background:#3b82f6; color:white; border-color:#3b82f6; }
-        .rte-fbtn.s-confirmed { border-color:#10b981; color:#059669; }
-        .rte-fbtn.s-confirmed.active { background:#10b981; color:white; border-color:#10b981; }
-        .rte-fbtn.s-refused { border-color:#ef4444; color:#dc2626; }
-        .rte-fbtn.s-refused.active { background:#ef4444; color:white; border-color:#ef4444; }
-        .rte-fbtn.p-unpaid { border-color:#ef4444; color:#dc2626; }
-        .rte-fbtn.p-unpaid.active { background:#ef4444; color:white; border-color:#ef4444; }
-        .rte-fbtn.p-partial { border-color:#f59e0b; color:#92400e; }
-        .rte-fbtn.p-partial.active { background:#f59e0b; color:white; border-color:#f59e0b; }
-        .rte-fbtn.p-paid { border-color:#10b981; color:#059669; }
-        .rte-fbtn.p-paid.active { background:#10b981; color:white; border-color:#10b981; }
+        /* ── Route Filters (simple modal) ── */
+        .rte-bar { display:flex; gap:5px; align-items:center; flex-wrap:wrap; padding:10px 0 4px; }
+        .rte-bar-btn { padding:7px 14px; border:1.5px solid var(--border); border-radius:20px; background:white; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.15s; }
+        .rte-bar-btn:hover { border-color:var(--primary); }
+        .rte-bar-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+        .rte-bar-btn.filter-open { background:var(--primary); color:white; border-color:var(--primary); }
+        .rte-badges { display:flex; gap:5px; flex-wrap:wrap; padding-bottom:6px; }
+        .rte-badge { display:inline-flex; align-items:center; gap:3px; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+        .rte-badge:hover { opacity:0.8; }
+        .rte-badge-status { background:#dbeafe; color:#1d4ed8; }
+        .rte-badge-pay { background:#fef3c7; color:#92400e; }
+        .rte-filter-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:300; }
+        .rte-filter-overlay.show { display:flex; align-items:flex-end; justify-content:center; }
+        .rte-filter-modal { background:white; border-radius:16px 16px 0 0; padding:20px; width:100%; max-width:480px; animation:rteModalUp 0.25s ease; }
+        @keyframes rteModalUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+        @media (min-width:600px) { .rte-filter-modal { border-radius:16px; margin-bottom:20px; } .rte-filter-overlay.show { align-items:center; } }
+        .rte-modal-label { font-size:10px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+        .rte-modal-row { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:14px; }
+        .rte-modal-btn { padding:8px 14px; border:1.5px solid var(--border); border-radius:20px; background:white; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; display:inline-flex; align-items:center; gap:4px; }
+        .rte-modal-btn:hover { transform:translateY(-1px); box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+        .rte-modal-btn.active { color:white; }
+        .rte-modal-btn.ms-new { border-color:#9ca3af; color:#6b7280; } .rte-modal-btn.ms-new.active { background:#6b7280; border-color:#6b7280; color:white; }
+        .rte-modal-btn.ms-work { border-color:#3b82f6; color:#1d4ed8; } .rte-modal-btn.ms-work.active { background:#3b82f6; border-color:#3b82f6; color:white; }
+        .rte-modal-btn.ms-confirmed { border-color:#10b981; color:#059669; } .rte-modal-btn.ms-confirmed.active { background:#10b981; border-color:#10b981; color:white; }
+        .rte-modal-btn.ms-refused { border-color:#ef4444; color:#dc2626; } .rte-modal-btn.ms-refused.active { background:#ef4444; border-color:#ef4444; color:white; }
+        .rte-modal-btn.mp-unpaid { border-color:#ef4444; color:#dc2626; } .rte-modal-btn.mp-unpaid.active { background:#ef4444; border-color:#ef4444; color:white; }
+        .rte-modal-btn.mp-partial { border-color:#f59e0b; color:#92400e; } .rte-modal-btn.mp-partial.active { background:#f59e0b; border-color:#f59e0b; color:white; }
+        .rte-modal-btn.mp-paid { border-color:#10b981; color:#059669; } .rte-modal-btn.mp-paid.active { background:#10b981; border-color:#10b981; color:white; }
+        .rte-modal-actions { display:flex; gap:8px; margin-top:4px; }
+        .rte-modal-actions button { flex:1; padding:12px; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
         .trip-filter-btn.dir-ua-eu { border-color: #2563eb; color: #2563eb; font-weight: 800; }
         .trip-filter-btn.dir-ua-eu:hover { background: #dbeafe; }
         .trip-filter-btn.dir-ua-eu.active { background: #2563eb; color: white; border-color: #2563eb; }
@@ -1361,9 +1362,29 @@
                 <h2 style="margin:0;font-size:18px;color:var(--text-primary);">🗺️ Маршрути</h2>
                 <button class="bs-btn" style="background:var(--primary);color:white;font-size:11px;padding:8px 14px;" onclick="loadRoutes(true)">🔄 Оновити</button>
             </div>
-            <!-- Route filters — smart collapsible -->
-            <div id="routeFiltersBar" class="rte-filters-wrap" style="display:none;">
-                <div id="rteFiltersContent"></div>
+            <!-- Route filters — simple bar + modal -->
+            <div id="routeFiltersBar" style="display:none;">
+                <div class="rte-bar">
+                    <button class="rte-bar-btn active" id="rteTypeAll" onclick="setRouteTypeFilter('all')">Всі</button>
+                    <button class="rte-bar-btn" id="rteTypePax" onclick="setRouteTypeFilter('pax')">👤 Пасажири</button>
+                    <button class="rte-bar-btn" id="rteTypeParcel" onclick="setRouteTypeFilter('parcel')">📦 Посилки</button>
+                    <button class="rte-bar-btn filter-open" onclick="openRteFilterModal()">⚡ Фільтри</button>
+                </div>
+                <div class="rte-badges" id="rteActiveBadges"></div>
+            </div>
+            <!-- Filter modal -->
+            <div class="rte-filter-overlay" id="rteFilterOverlay" onclick="if(event.target===this)closeRteFilterModal()">
+                <div class="rte-filter-modal">
+                    <div style="font-size:15px;font-weight:800;color:var(--text-primary);margin-bottom:14px;">⚡ Фільтри</div>
+                    <div class="rte-modal-label">📋 СТАТУС</div>
+                    <div class="rte-modal-row" id="rteModalStatusRow"></div>
+                    <div class="rte-modal-label">💰 ОПЛАТА</div>
+                    <div class="rte-modal-row" id="rteModalPayRow"></div>
+                    <div class="rte-modal-actions">
+                        <button style="background:#fee2e2;color:#dc2626;" onclick="rteResetFilters()">♻️ Скинути</button>
+                        <button style="background:var(--primary);color:white;" onclick="rteApplyFilters()">✓ Застосувати</button>
+                    </div>
+                </div>
             </div>
             <!-- Route bulk toolbar -->
             <div class="bulk-toolbar" id="routeBulkToolbar">
@@ -2664,23 +2685,13 @@ function toggleRouteDashboard() {
 }
 
 // ══════════════════════════════════════════════════════════
-// SMART ROUTE FILTERS — згортання, іконки, localStorage
+// ROUTE FILTERS — простий варіант з модалкою
 // ══════════════════════════════════════════════════════════
-var rteFiltersExpanded = false;
+var _rteModalStatus = 'all';
+var _rteModalPay = 'all';
 
-var RTE_STATUS_MAP = {
-    'all': { icon: '', label: 'Всі', css: 's-new' },
-    'Новий': { icon: '🆕', label: 'Новий', css: 's-new' },
-    'В роботі': { icon: '⚙️', label: 'В роботі', css: 's-work' },
-    'Підтверджено': { icon: '✅', label: 'Підтверджено', css: 's-confirmed' },
-    'Відмова': { icon: '❌', label: 'Відмова', css: 's-refused' }
-};
-var RTE_PAY_MAP = {
-    'all': { icon: '', label: 'Всі', css: 'p-unpaid' },
-    'Не оплачено': { icon: '❌', label: 'Не оплачено', css: 'p-unpaid' },
-    'Частково': { icon: '🟡', label: 'Частково', css: 'p-partial' },
-    'Оплачено': { icon: '💰', label: 'Оплачено', css: 'p-paid' }
-};
+var RTE_S = { 'Новий':'🆕', 'В роботі':'⚙️', 'Підтверджено':'✅', 'Відмова':'❌' };
+var RTE_P = { 'Не оплачено':'❌', 'Частково':'🟡', 'Оплачено':'💰' };
 
 function saveRteFilters() {
     try { localStorage.setItem('oksi_rte_filters', JSON.stringify({ type: routeTypeFilter, status: routeStatusFilter, pay: routePayFilter })); } catch(e) {}
@@ -2694,86 +2705,79 @@ function loadRteFilters() {
     } catch(e) {}
 }
 
-function renderRteFilters() {
-    var el = document.getElementById('rteFiltersContent');
-    if (!el) return;
-    var hasFilters = routeStatusFilter !== 'all' || routePayFilter !== 'all' || routeTypeFilter !== 'all';
-
-    if (!rteFiltersExpanded) {
-        // ── ЗГОРНУТИЙ ── чіпси активних фільтрів + кнопка розгортання
-        var html = '<div class="rte-filters-collapsed">';
-        // Тип
-        if (routeTypeFilter === 'pax') html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">👤 Пасажири</span>';
-        else if (routeTypeFilter === 'parcel') html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">📦 Посилки</span>';
-        // Статус
-        if (routeStatusFilter !== 'all') {
-            var sm = RTE_STATUS_MAP[routeStatusFilter] || {};
-            html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">' + (sm.icon||'') + ' ' + (sm.label||routeStatusFilter) + '</span>';
-        }
-        // Оплата
-        if (routePayFilter !== 'all') {
-            var pm = RTE_PAY_MAP[routePayFilter] || {};
-            html += '<span class="rte-chip rte-chip-pay" onclick="rteExpandFilters()">' + (pm.icon||'') + ' ' + (pm.label||routePayFilter) + '</span>';
-        }
-        html += '<button class="rte-chip rte-chip-expand" onclick="rteExpandFilters()">⚡ Фільтри</button>';
-        if (hasFilters) html += '<button class="rte-chip rte-chip-reset" onclick="rteResetFilters()">♻️</button>';
-        html += '</div>';
-        el.innerHTML = html;
-    } else {
-        // ── РОЗГОРНУТИЙ ── повний список кнопок
-        var html = '<div class="rte-filters-expanded">';
-        // Тип запису
-        html += '<div class="rte-filter-row" style="margin-bottom:10px;">';
-        html += '<button class="rte-fbtn s-new' + (routeTypeFilter==='all'?' active':'') + '" onclick="setRouteTypeFilter(\'all\')">Всі</button>';
-        html += '<button class="rte-fbtn s-work' + (routeTypeFilter==='pax'?' active':'') + '" onclick="setRouteTypeFilter(\'pax\')">👤 Пасажири</button>';
-        html += '<button class="rte-fbtn s-work' + (routeTypeFilter==='parcel'?' active':'') + '" onclick="setRouteTypeFilter(\'parcel\')">📦 Посилки</button>';
-        html += '</div>';
-        // Статус
-        html += '<div class="rte-filter-label">📋 СТАТУС</div>';
-        html += '<div class="rte-filter-row">';
-        ['all','Новий','В роботі','Підтверджено','Відмова'].forEach(function(k) {
-            var m = RTE_STATUS_MAP[k];
-            var isActive = routeStatusFilter === k;
-            html += '<button class="rte-fbtn ' + m.css + (isActive?' active':'') + '" onclick="setRouteStatusFilter(\'' + k + '\')">' + (m.icon ? m.icon + ' ' : '') + m.label + '</button>';
-        });
-        html += '</div>';
-        // Оплата
-        html += '<div class="rte-filter-label">💰 ОПЛАТА</div>';
-        html += '<div class="rte-filter-row">';
-        ['all','Не оплачено','Частково','Оплачено'].forEach(function(k) {
-            var m = RTE_PAY_MAP[k];
-            var isActive = routePayFilter === k;
-            html += '<button class="rte-fbtn ' + m.css + (isActive?' active':'') + '" onclick="setRoutePayFilter(\'' + k + '\')">' + (m.icon ? m.icon + ' ' : '') + m.label + '</button>';
-        });
-        html += '</div>';
-        // Скинути + Згорнути
-        html += '<div style="display:flex;gap:6px;margin-top:4px;">';
-        if (hasFilters) html += '<button class="rte-chip rte-chip-reset" onclick="rteResetFilters()">♻️ Скинути фільтри</button>';
-        html += '<button class="rte-chip" style="background:#f1f5f9;color:var(--text-secondary);" onclick="rteCollapseFilters()">▲ Згорнути</button>';
-        html += '</div>';
-        html += '</div>';
-        el.innerHTML = html;
-    }
+function updateRteTypeBtns() {
+    ['All','Pax','Parcel'].forEach(function(k) {
+        var el = document.getElementById('rteType' + k);
+        if (el) el.classList.toggle('active', routeTypeFilter === k.toLowerCase().replace('all','all').replace('pax','pax').replace('parcel','parcel'));
+    });
+    document.getElementById('rteTypeAll')?.classList.toggle('active', routeTypeFilter === 'all');
+    document.getElementById('rteTypePax')?.classList.toggle('active', routeTypeFilter === 'pax');
+    document.getElementById('rteTypeParcel')?.classList.toggle('active', routeTypeFilter === 'parcel');
 }
 
-function rteExpandFilters() { rteFiltersExpanded = true; renderRteFilters(); }
-function rteCollapseFilters() { rteFiltersExpanded = false; renderRteFilters(); }
+function updateRteBadges() {
+    var el = document.getElementById('rteActiveBadges');
+    if (!el) return;
+    var html = '';
+    if (routeStatusFilter !== 'all') {
+        html += '<span class="rte-badge rte-badge-status" onclick="setRouteStatusFilter(\'all\')">' + (RTE_S[routeStatusFilter]||'') + ' ' + routeStatusFilter + ' ✕</span>';
+    }
+    if (routePayFilter !== 'all') {
+        html += '<span class="rte-badge rte-badge-pay" onclick="setRoutePayFilter(\'all\')">' + (RTE_P[routePayFilter]||'') + ' ' + routePayFilter + ' ✕</span>';
+    }
+    el.innerHTML = html;
+}
+
+function openRteFilterModal() {
+    _rteModalStatus = routeStatusFilter;
+    _rteModalPay = routePayFilter;
+    renderRteModalBtns();
+    document.getElementById('rteFilterOverlay').classList.add('show');
+}
+function closeRteFilterModal() {
+    document.getElementById('rteFilterOverlay').classList.remove('show');
+}
+
+function renderRteModalBtns() {
+    var sRow = document.getElementById('rteModalStatusRow');
+    var pRow = document.getElementById('rteModalPayRow');
+    if (!sRow || !pRow) return;
+    var sHtml = '';
+    [['all','Всі','ms-new'],['Новий','🆕 Новий','ms-new'],['В роботі','⚙️ В роботі','ms-work'],['Підтверджено','✅ Підтверджено','ms-confirmed'],['Відмова','❌ Відмова','ms-refused']].forEach(function(s) {
+        sHtml += '<button class="rte-modal-btn ' + s[2] + (_rteModalStatus===s[0]?' active':'') + '" onclick="_rteModalStatus=\'' + s[0] + '\';renderRteModalBtns()">' + s[1] + '</button>';
+    });
+    sRow.innerHTML = sHtml;
+    var pHtml = '';
+    [['all','Всі','mp-unpaid'],['Не оплачено','❌ Не оплачено','mp-unpaid'],['Частково','🟡 Частково','mp-partial'],['Оплачено','💰 Оплачено','mp-paid']].forEach(function(p) {
+        pHtml += '<button class="rte-modal-btn ' + p[2] + (_rteModalPay===p[0]?' active':'') + '" onclick="_rteModalPay=\'' + p[0] + '\';renderRteModalBtns()">' + p[1] + '</button>';
+    });
+    pRow.innerHTML = pHtml;
+}
+
+function rteApplyFilters() {
+    routeStatusFilter = _rteModalStatus;
+    routePayFilter = _rteModalPay;
+    closeRteFilterModal();
+    saveRteFilters(); updateRteBadges(); renderRoutes();
+}
 function rteResetFilters() {
+    _rteModalStatus = 'all'; _rteModalPay = 'all';
     routeTypeFilter = 'all'; routeStatusFilter = 'all'; routePayFilter = 'all';
-    saveRteFilters(); renderRteFilters(); renderRoutes();
+    closeRteFilterModal();
+    saveRteFilters(); updateRteTypeBtns(); updateRteBadges(); renderRoutes();
 }
 
 function setRouteTypeFilter(val) {
     routeTypeFilter = val;
-    saveRteFilters(); renderRteFilters(); renderRoutes();
+    updateRteTypeBtns(); saveRteFilters(); renderRoutes();
 }
 function setRouteStatusFilter(val) {
     routeStatusFilter = val;
-    saveRteFilters(); rteFiltersExpanded = false; renderRteFilters(); renderRoutes();
+    saveRteFilters(); updateRteBadges(); renderRoutes();
 }
 function setRoutePayFilter(val) {
     routePayFilter = val;
-    saveRteFilters(); rteFiltersExpanded = false; renderRteFilters(); renderRoutes();
+    saveRteFilters(); updateRteBadges(); renderRoutes();
 }
 function getFilteredRouteRows(rows) {
     let filtered = rows;
@@ -2823,7 +2827,8 @@ function renderRoutes() {
     if (filtersBar) filtersBar.style.display = 'block';
     if (title) title.textContent = '🚐 ' + name;
     if (subtitle) subtitle.textContent = '👤 ' + paxCount + ' пасажирів · 📦 ' + parcelCount + ' посилок · ' + rows.length + ' записів';
-    renderRteFilters();
+    updateRteTypeBtns();
+    updateRteBadges();
 
     const filtered = getFilteredRouteRows(rows);
     let html = '';
