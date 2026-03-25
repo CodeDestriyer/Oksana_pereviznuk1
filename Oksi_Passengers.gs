@@ -1,5 +1,5 @@
 // ================================================================
-// GrescoBus_Passengers.gs — CRM Пасажири (менеджери)
+// Borispol_Vip_Travel_Passengers.gs — CRM Пасажири (менеджери)
 // Живе в таблиці: Passengers_crm_v4
 // Deploy: Web App → доступ "Будь-хто"
 // ================================================================
@@ -12,13 +12,13 @@ var DATA_START = 2;
 
 // ── ВСІ ТАБЛИЦІ СИСТЕМИ (SpreadsheetApp.openById) ──
 var DB = {
-  PASSENGERS: '1yxQI5oB0_LijN4KikojHYDJMdqMoYYsC0powMnoq3D4',
-  POSYLKI:    '1gdtxnVu7KsFKiMdxeZa-1P4YPsftjI2AI7nGclQtQYE',
-  MARHRUT:    '1oVeSgtk70xaK1rrRWIvNN7rWT4_3x28F7ZV7jwCc05I',
-  KLIYENTU:   '1NX6rG11sA2Ze8lbnceynFIxb6pIrBCe4e0Ot30cpWHc',
-  FINANCE:    '1XOqdYTyBFDriYexjKpJnIva6-OvBZv6M3TUSNNB3s4Y',
-  CONFIG:     '1z2b_n1-kgpAKgu09i-oIXlLM_X7heEpA4sxuT_rGR5A',
-  ARCHIVE:    '1bukpVyGioG5oweSZEfzFvmjI5DBDPYojwS7_ZfQHf54'
+  PASSENGERS: '1dCztfyvqFgCEIA6nmtLGFv94QPNDJa5lhCsWpzDVXxY',
+  POSYLKI:    '1kcF3JchG5n7OzB_K2h9hxBqap7xHDnKN5nwMO9Fm2eo',
+  MARHRUT:    '1to9F6K4p46ZUVva0ZG7nCO7ZFbW1ve0SUnathsqhUW0',
+  KLIYENTU:   '1e-V4gK63I3VPlwg_PpYmVOLAYF3YG_s866D5Ys0vVw4',
+  FINANCE:    '1Np3hLCwUIWW9FqWJDZjF_dUQZMIjY16oEH_Z8zEBe_A',
+  CONFIG:     '16j7sX17Ic45dbyyC7qvEG-8VuNtUdCz8d0S03FbABJs',
+  ARCHIVE:    '1Id93R7TJeIP62Gye7fFnu4q3YBZpRr2x652RWphLUiE'
 };
 
 // Головна таблиця цього скрипта
@@ -2075,7 +2075,7 @@ function doGet(e) {
   try {
     switch (action) {
       case 'ping':
-        result = { ok: true, message: 'GrescoBus CRM v3 API', version: '3.0', timestamp: new Date().toISOString() };
+        result = { ok: true, message: 'Borispol Vip Travel CRM v3 API', version: '3.0', timestamp: new Date().toISOString() };
         break;
       case 'getAll':
         result = apiGetAll({ sheet: e.parameter.sheet || 'all', filter: {} });
