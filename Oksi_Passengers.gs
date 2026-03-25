@@ -1971,6 +1971,9 @@ function apiDeleteRoute(params) {
     return { ok: false, error: 'Неможливо видалити останній аркуш' };
   }
 
+  // Архівуємо всі записи маршруту перед видаленням
+  archiveSheetToArchive(sheet, 'Маршрут_' + name, 'Видалено (маршрут)', params.archived_by || 'Менеджер');
+
   ss.deleteSheet(sheet);
   return { ok: true };
 }
@@ -1991,12 +1994,50 @@ function apiDeleteLinkedSheets(params) {
   for (var i = 0; i < variants.length; i++) {
     var s = ss.getSheetByName(variants[i]);
     if (s && ss.getSheets().length > 1) {
+      // Архівуємо записи перед видаленням
+      archiveSheetToArchive(s, variants[i], 'Видалено (маршрут)', params.archived_by || 'Менеджер');
       ss.deleteSheet(s);
       deleted.push(variants[i]);
     }
   }
 
   return { ok: true, deleted: deleted };
+}
+
+/**
+ * Хелпер: копіює всі записи аркуша в Archive_crm → "Архів маршрутів"
+ */
+function archiveSheetToArchive(sheet, sheetName, reason, archivedBy) {
+  var lastCol = sheet.getLastColumn();
+  var lastRow = sheet.getLastRow();
+  if (lastCol < 1 || lastRow < 2) return; // Порожній аркуш
+
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів маршрутів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів маршрутів');
+    var archHeaders = headers.concat(['SOURCE_SHEET', 'DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON']);
+    archSheet.getRange(1, 1, 1, archHeaders.length).setValues([archHeaders]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  var now = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+
+  for (var i = 0; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = data[i][j];
+    }
+    obj['SOURCE_SHEET'] = sheetName;
+    obj['DATE_ARCHIVE'] = now;
+    obj['ARCHIVED_BY'] = archivedBy;
+    obj['ARCHIVE_REASON'] = reason;
+
+    var row = archHeaders.map(function(h) { return obj[h] !== undefined ? obj[h] : ''; });
+    archSheet.appendRow(row);
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
