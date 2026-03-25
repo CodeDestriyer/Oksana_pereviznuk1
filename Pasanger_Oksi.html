@@ -10,10 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1a3a5e">
     <meta name="application-name" content="Borispol Vip Travel CRM">
-    <link rel="apple-touch-icon" href="icon-180.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <link rel="manifest" href="manifest.json">
+    <!-- PWA іконки та manifest генеруються динамічно через canvas/JS -->
     <title>Borispol Vip Travel CRM Пасажири v2</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -1667,15 +1664,15 @@
         ctx.font = (size * 0.35) + 'px serif';
         ctx.textAlign = 'center';
         ctx.fillText('🚐', size / 2, size * 0.42);
-        // Текст GB
+        // Текст BVT
         ctx.fillStyle = 'white';
-        ctx.font = '800 ' + (size * 0.22) + 'px Montserrat, Arial, sans-serif';
+        ctx.font = '800 ' + (size * 0.18) + 'px Montserrat, Arial, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('GRESKO', size / 2, size * 0.65);
+        ctx.fillText('BORISPOL', size / 2, size * 0.62);
         ctx.fillStyle = '#d90d0d';
-        ctx.font = '800 ' + (size * 0.2) + 'px Montserrat, Arial, sans-serif';
-        ctx.fillText('BUS', size / 2, size * 0.84);
+        ctx.font = '800 ' + (size * 0.15) + 'px Montserrat, Arial, sans-serif';
+        ctx.fillText('VIP TRAVEL', size / 2, size * 0.82);
         return c.toDataURL('image/png');
     }
 
