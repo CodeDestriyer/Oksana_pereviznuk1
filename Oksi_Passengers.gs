@@ -898,8 +898,12 @@ function apiDeleteFromSheet(params) {
   var found = findRow(sh, idCol, idVal);
   if (!found) return { ok: false, error: 'Запис не знайдено' };
   sh.deleteRow(found.rowNum);
-  // Інвалідуємо кеш маршруту
-  try { CacheService.getScriptCache().remove('routeSheet_' + shName); } catch(e) {}
+  // Інвалідуємо кеш маршруту і списку
+  try {
+    var c = CacheService.getScriptCache();
+    c.remove('routeSheet_' + shName);
+    c.remove('routesList_v2');
+  } catch(e) {}
   return { ok: true };
 }
 
@@ -1908,7 +1912,7 @@ function apiAddToRoute(params) {
   try {
     var cache = CacheService.getScriptCache();
     cache.remove('routeSheet_' + sheetName);
-    cache.remove('routesList_v1');
+    cache.remove('routesList_v2');
   } catch(e) { /* ignore */ }
 
   return { ok: true, added: leads.length };

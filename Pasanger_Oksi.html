@@ -3168,8 +3168,12 @@ async function doTransferRouteLead(rteId, fromSheet, toSheet) {
     const delRes = await apiPost('deleteFromSheet', { sheet: fromSheet, id_col: 'RTE_ID', id_val: rteId });
     hideLoader();
     if (delRes.ok) {
+        // Видаляємо зі старого маршруту
         sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
         routeSelectedIds.delete(rteId);
+        // Інвалідуємо дані цільового маршруту щоб при відкритті перезавантажив
+        var targetRoute = routes.find(function(r) { return r.sheetName === toSheet; });
+        if (targetRoute) { targetRoute.rows = null; targetRoute.paxCount = (targetRoute.paxCount || 0) + 1; }
         renderRouteSidebar();
         renderRoutes();
         showToast('✅ Пересаджено в ' + toSheet.replace('Маршрут_', ''));
@@ -3209,6 +3213,9 @@ async function doBulkTransfer(toSheet) {
         const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
         if (res.ok) { ok++; sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId); }
     }
+    // Інвалідуємо цільовий маршрут
+    var targetRoute = routes.find(function(r) { return r.sheetName === toSheet; });
+    if (targetRoute) { targetRoute.rows = null; targetRoute.paxCount = (targetRoute.paxCount || 0) + ok; }
     hideLoader();
     routeSelectedIds.clear();
     _routeToolbarForceOpen = false;
