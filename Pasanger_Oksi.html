@@ -1138,6 +1138,9 @@
         <div class="side-menu-item" onclick="openAddModal(); closeSideMenu();" style="background:rgba(255,255,255,0.1);">
             <span class="side-menu-item-left">➕ Новий пасажир</span>
         </div>
+        <div class="side-menu-item" onclick="openVideoModal(); closeSideMenu();" style="background:rgba(255,255,255,0.05);">
+            <span class="side-menu-item-left">📹 Навчання</span>
+        </div>
     </div>
 </div>
 
@@ -1275,6 +1278,7 @@
         <div class="pc-sidebar-section">
             <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
                 <button onclick="openAddModal()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">➕ Новий пасажир</button>
+                <button onclick="openVideoModal()" style="width:100%;padding:10px;background:white;color:var(--primary);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📹 Навчання</button>
             </div>
         </div>
     </aside>
@@ -7771,6 +7775,29 @@ function obFinish(completed) {
 
 // Навчання тільки по кнопці — без автозапуску
 function checkOnboardingAutoStart() { }
+</script>
+
+<!-- VIDEO MODAL -->
+<div id="videoModalOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;" onclick="if(event.target===this)closeVideoModal()">
+    <div style="background:white;border-radius:16px;width:94%;max-width:720px;overflow:hidden;animation:rteModalUp 0.25s ease;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--primary);color:white;">
+            <span style="font-size:14px;font-weight:800;">📹 Навчання — Borispol Vip Travel CRM</span>
+            <button onclick="closeVideoModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer;">×</button>
+        </div>
+        <div style="padding:0;position:relative;width:100%;padding-bottom:56.25%;height:0;">
+            <iframe id="videoIframe" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+<script>
+function openVideoModal() {
+    document.getElementById('videoIframe').src = 'https://www.youtube.com/embed/dXhlCFwPJiY?rel=0&autoplay=1';
+    document.getElementById('videoModalOverlay').style.display = 'flex';
+}
+function closeVideoModal() {
+    document.getElementById('videoIframe').src = '';
+    document.getElementById('videoModalOverlay').style.display = 'none';
+}
 </script>
 </body>
 </html>
