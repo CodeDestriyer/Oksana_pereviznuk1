@@ -1089,7 +1089,6 @@
                 </div>
                 <div class="side-menu-item" onclick="showArchiveView(); closeSideMenu();">
                     <span class="side-menu-item-left">📦 Архів</span>
-                    <span class="side-menu-item-count" id="mobileCountArchive">0</span>
                 </div>
             </div>
         </div>
@@ -1223,7 +1222,6 @@
 
                 <div class="pc-sidebar-item archive" id="pcArchive" onclick="showArchiveView()">
                     <span><span class="item-icon">📦</span><span class="item-text">Архів</span></span>
-                    <span class="item-count" id="pcCountArchive">0</span>
                 </div>
             </div>
         </div>
@@ -2324,13 +2322,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoader('Завантаження...');
     Promise.all([
         apiPost('getAll', { sheet: 'all' }),
-        apiPost('getTrips', { filter: {} }),
-        apiPost('getArchive', {})
-    ]).then(([paxRes, tripRes, archRes]) => {
+        apiPost('getTrips', { filter: {} })
+    ]).then(([paxRes, tripRes]) => {
         hideLoader();
         if (paxRes.ok) passengers = paxRes.data;
         if (tripRes.ok) trips = tripRes.data;
-        if (archRes.ok) archivedPassengers = archRes.rows || [];
         updateAllCounts();
         updateTripFilterDropdown();
         updateTripAutoFilterDropdown();
@@ -2355,13 +2351,11 @@ function silentSync(manual, force) {
         return Promise.all([
             apiPost('getAll', { sheet: 'all' }),
             apiPost('getTrips', { filter: {} }),
-            apiPost('getRoutesList', {}),
-            apiPost('getArchive', {})
-        ]).then(([paxRes, tripRes, routeRes, archRes]) => {
+            apiPost('getRoutesList', {})
+        ]).then(([paxRes, tripRes, routeRes]) => {
             hideLoader();
             if (paxRes.ok) { passengers = paxRes.data; applyOptimizedOrder(); }
             if (tripRes.ok) trips = tripRes.data;
-            if (archRes.ok) archivedPassengers = archRes.rows || [];
             if (routeRes.ok && routeRes.data) {
                 var newList = routeRes.data;
                 allRouteSheets = newList.map(function(s) {
@@ -3336,7 +3330,6 @@ function updateAllCounts() {
     setCount('pcCountUaEu', uaeu.length);
     setCount('pcCountEuUa', euua.length);
     setCount('pcCountTrips', trips.length);
-    setCount('pcCountArchive', archivedPassengers.length);
     setCount('mobileCountAll', allPax.length);
     setCount('mobileCountNew24', new24.length);
     setCount('mobileCountUaEu', uaeu.length);
@@ -7137,7 +7130,6 @@ async function loadArchive(append) {
             }
             archiveTotal = res.total || archivedPassengers.length;
             archiveHasMore = res.hasMore || false;
-            setCount('pcCountArchive', archiveTotal);
             if (currentView === 'archive') renderArchive();
         }
     } catch (e) {
@@ -7155,7 +7147,8 @@ function showArchiveView() {
     document.getElementById('archiveView').style.display = 'block';
     updatePcSidebarActive();
     updateMobileSidebarActive();
-    loadArchive(); // Завантажити свіжі дані з Archive_crm_v3
+    showLoader('📦 Завантаження архіву...');
+    loadArchive().then(function() { hideLoader(); }).catch(function() { hideLoader(); });
 }
 
 function getArchivedPassengers() {
