@@ -373,7 +373,8 @@
         .route-card-details .detail-block { border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
         .route-card-details .detail-block-label { font-size:9px; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:2px; }
         .route-card-details .detail-block-value { font-size:12px; font-weight:600; color:var(--text-primary); }
-        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:0 0 12px 12px; padding:14px 18px; margin:-16px -16px 0 -16px; position:sticky; top:52px; z-index:20; }
+        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:0 0 12px 12px; padding:14px 18px; margin:-12px -12px 0 -12px; position:sticky; top:52px; z-index:20; }
+        @media (min-width:901px) { .route-header-bar { margin:-16px -24px 0 -24px; } }
         .route-header-bar h2 { margin:0; font-size:18px; font-weight:800; }
         .route-header-bar .route-subtitle { font-size:11px; opacity:0.85; }
         .route-card.selected { background:#f0f7ff; border-left-color:var(--primary); }
@@ -390,12 +391,12 @@
         .trip-filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
 
         /* ── Route Filters (simple modal) ── */
-        .rte-bar { display:flex; gap:5px; align-items:center; flex-wrap:wrap; padding:10px 0 4px; }
+        .rte-bar { display:flex !important; gap:5px; align-items:center; flex-wrap:wrap; padding:10px 0 6px; }
         .rte-bar-btn { padding:7px 14px; border:1.5px solid var(--border); border-radius:20px; background:white; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.15s; }
         .rte-bar-btn:hover { border-color:var(--primary); }
         .rte-bar-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
         .rte-bar-btn.filter-open { background:var(--primary); color:white; border-color:var(--primary); }
-        .rte-badges { display:flex; gap:5px; flex-wrap:wrap; padding-bottom:6px; }
+        .rte-badges { display:flex; gap:5px; flex-wrap:wrap; padding:4px 0 8px; min-height:0; }
         .rte-badge { display:inline-flex; align-items:center; gap:3px; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; cursor:pointer; transition:all 0.15s; }
         .rte-badge:hover { opacity:0.8; }
         .rte-badge-status { background:#dbeafe; color:#1d4ed8; }
