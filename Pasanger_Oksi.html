@@ -3157,7 +3157,7 @@ async function doTransferRouteLead(rteId, fromSheet, toSheet) {
     const addRes = await apiPost('addToRoute', { sheetName: toSheet, leads: [row] });
     if (!addRes.ok) { hideLoader(); showToast('❌ ' + (addRes.error || 'Помилка додавання')); return; }
     // Delete from old route
-    const delRes = await apiPost('deletePassenger', { sheet: fromSheet, pax_id: rteId });
+    const delRes = await apiPost('deleteFromSheet', { sheet: fromSheet, id_col: 'RTE_ID', id_val: rteId });
     hideLoader();
     if (delRes.ok) {
         sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);

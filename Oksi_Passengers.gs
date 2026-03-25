@@ -888,7 +888,9 @@ function apiDeletePassenger(params) {
 function apiDeleteFromSheet(params) {
   var shName = params.sheet;
   if (!shName) return { ok: false, error: 'sheet не вказано' };
-  var sh = getSheet(shName);
+  // Маршрути живуть в DB.MARHRUT, пасажири в SS_ID
+  var ssId = shName.indexOf('Маршрут_') === 0 || shName.indexOf('Відправка_') === 0 || shName.indexOf('Витрати_') === 0 ? DB.MARHRUT : SS_ID;
+  var sh = SpreadsheetApp.openById(ssId).getSheetByName(shName);
   if (!sh) return { ok: false, error: 'Аркуш не знайдено: ' + shName };
   var idCol = params.id_col || 'RTE_ID';
   var idVal = params.id_val || params.pax_id || params.rte_id;
