@@ -579,6 +579,92 @@
         .seat-picker-footer .btn-save:active { background: #1d4ed8; }
         .seat-picker-footer .btn-clear { background: #fef2f2; color: #dc2626; flex: 0.6; }
 
+        /* Collapsible filter toggle (PC sidebar) */
+        .pax-filter-toggle {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer;
+            font-size: 10px; font-weight: 700; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            background: white; border: 1px solid var(--border); transition: all 0.2s;
+        }
+        .pax-filter-toggle:hover { border-color: var(--primary); color: var(--primary); }
+        .pax-filter-arrow { font-size: 9px; transition: transform 0.3s ease; }
+        .pax-filter-arrow.open { transform: rotate(90deg); }
+        .pax-filter-panel {
+            margin-top: 8px; padding: 10px 12px; background: white;
+            border: 1px solid var(--border); border-radius: 8px;
+            animation: filterSlideDown 0.25s ease;
+        }
+        @keyframes filterSlideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile filter toggle */
+        .mobile-filter-toggle {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 12px; margin: 4px 0; border-radius: 6px; cursor: pointer;
+            font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7);
+            text-transform: uppercase; letter-spacing: 0.4px;
+            background: rgba(255,255,255,0.06); transition: all 0.2s;
+        }
+        .mobile-filter-toggle:hover { background: rgba(255,255,255,0.12); }
+        .mobile-filter-arrow { font-size: 9px; transition: transform 0.3s ease; color: rgba(255,255,255,0.5); }
+        .mobile-filter-arrow.open { transform: rotate(90deg); }
+        .mobile-filter-panel {
+            padding: 8px 10px; margin-bottom: 4px;
+            background: rgba(255,255,255,0.06); border-radius: 6px;
+            animation: filterSlideDown 0.25s ease;
+        }
+
+        /* ── Passenger Calendar ── */
+        .pax-cal { width: 100%; }
+        .pax-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .pax-cal-title { font-size: 12px; font-weight: 700; color: var(--primary); }
+        .pax-cal-nav { background: none; border: 1px solid var(--border); border-radius: 6px; width: 28px; height: 28px; cursor: pointer; font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+        .pax-cal-nav:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .pax-cal-dir { display: flex; gap: 4px; margin-bottom: 8px; }
+        .pax-cal-dir-btn { flex: 1; padding: 5px 4px; border: 1px solid var(--border); border-radius: 6px; background: white; font-size: 10px; font-weight: 700; cursor: pointer; text-align: center; font-family: inherit; transition: all 0.15s; color: var(--text-secondary); }
+        .pax-cal-dir-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .pax-cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 2px; }
+        .pax-cal-wd { font-size: 9px; font-weight: 700; color: var(--text-secondary); padding: 3px 0; }
+        .pax-cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .pax-cal-day {
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 36px; border-radius: 6px; cursor: pointer; background: var(--bg-main);
+            transition: all 0.15s; border: 2px solid transparent;
+        }
+        .pax-cal-day:hover { background: #e2e8f0; }
+        .pax-cal-day.empty { background: transparent; cursor: default; }
+        .pax-cal-day.today { border-color: var(--primary); }
+        .pax-cal-day.selected { background: var(--primary); border-color: var(--primary); }
+        .pax-cal-day.selected .pax-cal-num { color: white; }
+        .pax-cal-day.selected .pax-cal-badge { background: white; color: var(--primary); }
+        .pax-cal-num { font-size: 11px; font-weight: 600; color: var(--text-primary); line-height: 1; }
+        .pax-cal-badge {
+            font-size: 8px; font-weight: 800; background: var(--primary); color: white;
+            border-radius: 8px; padding: 1px 5px; margin-top: 1px; min-width: 16px; text-align: center; line-height: 1.3;
+        }
+        .pax-cal-badge.zero { background: transparent; color: transparent; }
+        .pax-cal-reset { width: 100%; margin-top: 6px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px; background: white; font-size: 10px; font-weight: 600; cursor: pointer; color: var(--text-secondary); font-family: inherit; transition: all 0.15s; }
+        .pax-cal-reset:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* Mobile calendar dark theme overrides */
+        .side-menu .pax-cal-nav { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white; }
+        .side-menu .pax-cal-nav:hover { background: rgba(255,255,255,0.25); }
+        .side-menu .pax-cal-title { color: white; }
+        .side-menu .pax-cal-wd { color: rgba(255,255,255,0.5); }
+        .side-menu .pax-cal-day { background: rgba(255,255,255,0.08); }
+        .side-menu .pax-cal-day:hover { background: rgba(255,255,255,0.18); }
+        .side-menu .pax-cal-day.empty { background: transparent; }
+        .side-menu .pax-cal-day.today { border-color: #60a5fa; }
+        .side-menu .pax-cal-day.selected { background: #2563eb; border-color: #2563eb; }
+        .side-menu .pax-cal-num { color: rgba(255,255,255,0.9); }
+        .side-menu .pax-cal-day.selected .pax-cal-num { color: white; }
+        .side-menu .pax-cal-badge { background: #60a5fa; color: #0f172a; }
+        .side-menu .pax-cal-day.selected .pax-cal-badge { background: white; color: #2563eb; }
+        .side-menu .pax-cal-dir-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+        .side-menu .pax-cal-dir-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .side-menu .pax-cal-reset { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
+        .side-menu .pax-cal-reset:hover { color: white; border-color: rgba(255,255,255,0.3); }
+
         /* Trip calendar picker */
         .trip-calendar { background: white; border-radius: 8px; padding: 12px; border: 1px solid var(--border); }
         .trip-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -951,10 +1037,54 @@
                     <span class="side-menu-item-left"><span class="card-direction dir-badge-eu-ua" style="font-size:10px;">EU → UA</span> Європа-Україна</span>
                     <span class="side-menu-item-count" id="mobileCountEuUa">0</span>
                 </div>
+                <!-- Фільтри — згортальні -->
+                <div class="mobile-filter-toggle" onclick="toggleMobileFilters(event)">
+                    <span>🔍 Фільтри</span>
+                    <span class="mobile-filter-arrow" id="mobileFilterArrow">►</span>
+                </div>
+                <div class="mobile-filter-panel" id="mobileFilterPanel" style="display:none;">
+                    <div style="margin-bottom:6px;">
+                        <label style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);text-transform:uppercase;">Статус ліда</label>
+                        <select onchange="document.getElementById('filterLeadStatus').value=this.value;applyFilters();" style="width:100%;padding:6px;border:none;border-radius:6px;font-size:11px;font-family:inherit;margin-top:3px;background:rgba(255,255,255,0.15);color:white;">
+                            <option value="all" style="color:#333;">Всі</option>
+                            <option value="Новий" style="color:#333;">Новий</option>
+                            <option value="В роботі" style="color:#333;">В роботі</option>
+                            <option value="Підтверджено" style="color:#333;">Підтверджено</option>
+                            <option value="Відмова" style="color:#333;">Відмова</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:6px;">
+                        <label style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);text-transform:uppercase;">Статус оплати</label>
+                        <select onchange="document.getElementById('filterPayStatus').value=this.value;applyFilters();" style="width:100%;padding:6px;border:none;border-radius:6px;font-size:11px;font-family:inherit;margin-top:3px;background:rgba(255,255,255,0.15);color:white;">
+                            <option value="all" style="color:#333;">Всі</option>
+                            <option value="Не оплачено" style="color:#333;">Не оплачено</option>
+                            <option value="Частково" style="color:#333;">Частково</option>
+                            <option value="Оплачено" style="color:#333;">Оплачено</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);text-transform:uppercase;">Рейс</label>
+                        <select onchange="document.getElementById('filterTrip').value=this.value;applyFilters();" style="width:100%;padding:6px;border:none;border-radius:6px;font-size:11px;font-family:inherit;margin-top:3px;background:rgba(255,255,255,0.15);color:white;">
+                            <option value="all" style="color:#333;">Всі</option>
+                            <option value="none" style="color:#333;">Без рейсу</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="side-menu-item" onclick="showArchiveView(); closeSideMenu();">
                     <span class="side-menu-item-left">📦 Архів</span>
                     <span class="side-menu-item-count" id="mobileCountArchive">0</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- КАЛЕНДАР — згорнутий розділ -->
+        <div class="mobile-section">
+            <div class="mobile-section-header" onclick="toggleMobileSection('paxCal')">
+                <span class="mobile-section-title">📅 КАЛЕНДАР</span>
+                <span class="mobile-section-toggle" id="mobileTogglePaxCal">►</span>
+            </div>
+            <div class="mobile-section-content" id="mobileSectionPaxCal" style="display:none;">
+                <div id="paxCalendarMobile" style="padding:4px;"></div>
             </div>
         </div>
 
@@ -1037,13 +1167,12 @@
                     <span class="item-count" id="pcCountEuUa">0</span>
                 </div>
 
-                <div class="pc-sidebar-item archive" id="pcArchive" onclick="showArchiveView()">
-                    <span><span class="item-icon">📦</span><span class="item-text">Архів</span></span>
-                    <span class="item-count" id="pcCountArchive">0</span>
+                <!-- Фільтри — згортальні -->
+                <div class="pax-filter-toggle" onclick="togglePaxFilters()">
+                    <span>🔍 Фільтри</span>
+                    <span class="pax-filter-arrow" id="paxFilterArrow">►</span>
                 </div>
-
-                <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
-                    <div style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;margin-bottom:8px;letter-spacing:0.5px;">🔍 Фільтри</div>
+                <div class="pax-filter-panel" id="paxFilterPanel" style="display:none;">
                     <div style="margin-bottom:8px;">
                         <label style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">Статус ліда</label>
                         <select id="filterLeadStatus" onchange="applyFilters()" style="width:100%;padding:7px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;margin-top:4px;">
@@ -1071,6 +1200,22 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="pc-sidebar-item archive" id="pcArchive" onclick="showArchiveView()">
+                    <span><span class="item-icon">📦</span><span class="item-text">Архів</span></span>
+                    <span class="item-count" id="pcCountArchive">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Календар пасажирів -->
+        <div class="pc-sidebar-section">
+            <div class="pc-sidebar-header collapsed" onclick="togglePcSection('paxCal')">
+                <span class="pc-sidebar-title">📅 КАЛЕНДАР</span>
+                <span class="pc-sidebar-toggle" id="pcTogglePaxCal">▼</span>
+            </div>
+            <div class="pc-sidebar-content collapsed" id="pcSectionPaxCal">
+                <div id="paxCalendarPC"></div>
             </div>
         </div>
 
@@ -3113,6 +3258,9 @@ function updateAllCounts() {
 
     // PWA Badge: лічильник на іконці додатку
     updateAppBadge(new24.length);
+
+    // Оновити календар пасажирів
+    renderPaxCalendar();
 }
 
 function setCount(id, n) { const el = document.getElementById(id); if (el) el.textContent = n; }
@@ -3236,6 +3384,12 @@ function getFilteredPassengers() {
         if (tripFilter === 'none' && p['CAL_ID']) return false;
         if (tripFilter === 'none' && !p['CAL_ID']) { /* pass */ }
         else if (tripFilter !== 'all' && tripFilter !== 'none' && p['CAL_ID'] !== tripFilter) return false;
+        // Фільтр по даті з календаря пасажирів
+        if (paxCalSelectedDate) {
+            var dep = String(p['Дата виїзду'] || '');
+            var depDate = dep.replace(/\s.*/, ''); // "dd.MM.yyyy HH:mm" → "dd.MM.yyyy"
+            if (depDate !== paxCalSelectedDate) return false;
+        }
         if (search) {
             const name = String(p['Піб'] || '').toLowerCase();
             const phone = String(p['Телефон пасажира'] || '');
@@ -5540,6 +5694,8 @@ function toggleMobileSection(section) {
     if (toggle) toggle.classList.toggle('open', !isOpen);
     // Для маршрутів — підвантажити якщо ще не завантажено
     if (section === 'routes' && !isOpen && routes.length === 0) loadRoutes();
+    // Для календаря — рендеримо при відкритті
+    if (section === 'paxCal' && !isOpen) renderPaxCalendar();
 }
 
 function togglePcSection(section) {
@@ -5547,6 +5703,8 @@ function togglePcSection(section) {
     const header = content?.previousElementSibling;
     if (content) content.classList.toggle('collapsed');
     if (header) header.classList.toggle('collapsed');
+    // Для календаря — рендеримо при відкритті
+    if (section === 'paxCal' && content && !content.classList.contains('collapsed')) renderPaxCalendar();
 }
 
 function togglePcSidebar() {
@@ -5555,6 +5713,116 @@ function togglePcSidebar() {
     const isCollapsed = sidebar.classList.toggle('collapsed-sidebar');
     btn.textContent = isCollapsed ? '▶' : '◀';
     btn.style.left = isCollapsed ? '0px' : '300px';
+}
+
+// ================================================================
+// COLLAPSIBLE FILTERS (PC & Mobile)
+// ================================================================
+function togglePaxFilters() {
+    var panel = document.getElementById('paxFilterPanel');
+    var arrow = document.getElementById('paxFilterArrow');
+    if (!panel) return;
+    var isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    if (arrow) arrow.classList.toggle('open', !isOpen);
+}
+function toggleMobileFilters(e) {
+    if (e) e.stopPropagation();
+    var panel = document.getElementById('mobileFilterPanel');
+    var arrow = document.getElementById('mobileFilterArrow');
+    if (!panel) return;
+    var isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    if (arrow) arrow.classList.toggle('open', !isOpen);
+}
+
+// ================================================================
+// PASSENGER CALENDAR — календар з кількістю пасажирів по датах
+// ================================================================
+var paxCalMonth = new Date();
+var paxCalSelectedDate = null;
+var paxCalDirFilter = 'all'; // 'all', 'ua-eu', 'eu-ua'
+
+function renderPaxCalendar() {
+    var containers = [document.getElementById('paxCalendarPC'), document.getElementById('paxCalendarMobile')];
+    var y = paxCalMonth.getFullYear(), m = paxCalMonth.getMonth();
+    var months = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+    var days = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+    var firstDay = new Date(y, m, 1);
+    var startDay = firstDay.getDay() - 1; if (startDay < 0) startDay = 6;
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    var today = new Date(); today.setHours(0,0,0,0);
+
+    // Рахуємо пасажирів по датах
+    var dateCounts = {};
+    passengers.forEach(function(p) {
+        if ((p['Статус CRM'] || 'Активний') === 'Архів') return;
+        if (paxCalDirFilter !== 'all' && !isDir(p, paxCalDirFilter)) return;
+        var dep = String(p['Дата виїзду'] || '').replace(/\s.*/, '');
+        if (!dep) return;
+        var parts = dep.split('.');
+        if (parts.length < 3) return;
+        var pm = parseInt(parts[1], 10) - 1;
+        var py = parseInt(parts[2], 10);
+        if (py === y && pm === m) {
+            dateCounts[dep] = (dateCounts[dep] || 0) + 1;
+        }
+    });
+
+    var html = '<div class="pax-cal">';
+    // Direction filter
+    html += '<div class="pax-cal-dir">';
+    html += '<button class="pax-cal-dir-btn' + (paxCalDirFilter === 'all' ? ' active' : '') + '" onclick="setPaxCalDir(\'all\')">Всі</button>';
+    html += '<button class="pax-cal-dir-btn' + (paxCalDirFilter === 'ua-eu' ? ' active' : '') + '" onclick="setPaxCalDir(\'ua-eu\')">UA→EU</button>';
+    html += '<button class="pax-cal-dir-btn' + (paxCalDirFilter === 'eu-ua' ? ' active' : '') + '" onclick="setPaxCalDir(\'eu-ua\')">EU→UA</button>';
+    html += '</div>';
+    // Header
+    html += '<div class="pax-cal-header">';
+    html += '<button class="pax-cal-nav" onclick="paxCalMonth.setMonth(paxCalMonth.getMonth()-1);renderPaxCalendar()">◀</button>';
+    html += '<span class="pax-cal-title">' + months[m] + ' ' + y + '</span>';
+    html += '<button class="pax-cal-nav" onclick="paxCalMonth.setMonth(paxCalMonth.getMonth()+1);renderPaxCalendar()">▶</button>';
+    html += '</div>';
+    // Weekdays
+    html += '<div class="pax-cal-weekdays">';
+    days.forEach(function(d) { html += '<div class="pax-cal-wd">' + d + '</div>'; });
+    html += '</div>';
+    // Days
+    html += '<div class="pax-cal-days">';
+    for (var i = 0; i < startDay; i++) html += '<div class="pax-cal-day empty"></div>';
+    for (var d = 1; d <= daysInMonth; d++) {
+        var dt = new Date(y, m, d);
+        var dateStr = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0') + '.' + y;
+        var isToday = dt.getTime() === today.getTime();
+        var isSel = paxCalSelectedDate === dateStr;
+        var cnt = dateCounts[dateStr] || 0;
+        html += '<div class="pax-cal-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="selectPaxCalDate(\'' + dateStr + '\')">';
+        html += '<span class="pax-cal-num">' + d + '</span>';
+        html += '<span class="pax-cal-badge' + (cnt === 0 ? ' zero' : '') + '">' + cnt + '</span>';
+        html += '</div>';
+    }
+    html += '</div>';
+    // Reset button
+    if (paxCalSelectedDate) {
+        html += '<button class="pax-cal-reset" onclick="selectPaxCalDate(null)">✕ Скинути фільтр дати</button>';
+    }
+    html += '</div>';
+
+    containers.forEach(function(el) { if (el) el.innerHTML = html; });
+}
+
+function selectPaxCalDate(dateStr) {
+    if (paxCalSelectedDate === dateStr || dateStr === null) {
+        paxCalSelectedDate = null;
+    } else {
+        paxCalSelectedDate = dateStr;
+    }
+    renderPaxCalendar();
+    render();
+}
+
+function setPaxCalDir(dir) {
+    paxCalDirFilter = dir;
+    renderPaxCalendar();
 }
 
 function openModal(id) { document.getElementById(id)?.classList.add('show'); }
