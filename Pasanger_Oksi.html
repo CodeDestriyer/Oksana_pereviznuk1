@@ -3086,7 +3086,7 @@ function openRouteEditModal(rteId, sheetName) {
 
 // ── Видалити лід з маршруту ──
 async function deleteFromRoute(rteId, sheetName, leadName) {
-    showConfirm('Видалити «' + leadName + '» з маршруту?', async (yes) => {
+    showConfirm('Прибрати «' + leadName + '» з маршруту? (лід залишиться в CRM)', async (yes) => {
         if (!yes) return;
         showLoader('Видалення з маршруту...');
         const res = await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
@@ -3095,7 +3095,7 @@ async function deleteFromRoute(rteId, sheetName, leadName) {
             const sheet = routes[activeRouteIdx];
             if (sheet) sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             routeSelectedIds.delete(rteId);
-            showToast('✅ Видалено з маршруту');
+            showToast('✅ Прибрано з маршруту');
             renderRoutes();
         } else {
             showToast('❌ ' + (res.error || 'Помилка'));
@@ -3103,14 +3103,14 @@ async function deleteFromRoute(rteId, sheetName, leadName) {
     });
 }
 
-// ── Bulk видалити з маршруту ──
+// ── Bulk видалити з маршруту (тільки з аркуша, ліди залишаються в CRM) ──
 async function routeBulkDeleteFromRoute() {
     if (routeSelectedIds.size === 0) return;
     const sheet = routes[activeRouteIdx];
     if (!sheet) return;
-    showConfirm('Видалити ' + routeSelectedIds.size + ' записів з маршруту?', async (yes) => {
+    showConfirm('Прибрати ' + routeSelectedIds.size + ' записів з маршруту? (ліди залишаться в CRM)', async (yes) => {
         if (!yes) return;
-        showLoader('Видалення...');
+        showLoader('Видалення з маршруту...');
         let ok = 0, fail = 0;
         for (const rteId of routeSelectedIds) {
             const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
@@ -3119,7 +3119,9 @@ async function routeBulkDeleteFromRoute() {
         }
         hideLoader();
         routeSelectedIds.clear();
-        showToast('✅ Видалено: ' + ok + (fail ? ', помилок: ' + fail : ''));
+        _routeToolbarForceOpen = false;
+        updateRouteBulkToolbar();
+        showToast('✅ Прибрано з маршруту: ' + ok + (fail ? ', помилок: ' + fail : ''));
         renderRoutes();
     });
 }
