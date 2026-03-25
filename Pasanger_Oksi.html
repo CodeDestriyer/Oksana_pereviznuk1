@@ -373,9 +373,9 @@
         .route-card-details .detail-block { border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
         .route-card-details .detail-block-label { font-size:9px; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:2px; }
         .route-card-details .detail-block-value { font-size:12px; font-weight:600; color:var(--text-primary); }
-        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:12px; padding:16px 20px; margin-bottom:16px; }
-        .route-header-bar h2 { margin:0; font-size:20px; font-weight:800; }
-        .route-header-bar .route-subtitle { font-size:12px; opacity:0.85; margin-top:4px; }
+        .route-header-bar { background:linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%); color:white; border-radius:12px; padding:14px 18px; margin-bottom:0; position:sticky; top:52px; z-index:20; }
+        .route-header-bar h2 { margin:0; font-size:18px; font-weight:800; }
+        .route-header-bar .route-subtitle { font-size:11px; opacity:0.85; }
         .route-card.selected { background:#f0f7ff; border-left-color:var(--primary); }
         .route-card .card-checkbox-wrap { flex-shrink:0; }
         .route-card .detail-block-actions { margin-top:4px; }
@@ -389,13 +389,35 @@
         .trip-filter-btn:hover { border-color: var(--orange); }
         .trip-filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
 
-        /* Route filter section toggles */
-        .rte-section-toggle { padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: #f8fafc; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; color: var(--text-secondary); }
-        .rte-section-toggle:hover { border-color: var(--primary); color: var(--primary); }
-        .rte-section-toggle.open { background: var(--primary); color: white; border-color: var(--primary); }
-        .rte-section-toggle.open span { display: inline-block; transform: rotate(90deg); }
-        .rte-filter-hidden { display: none !important; }
-        .rte-filter-visible { display: contents !important; }
+        /* ── Smart Route Filters ── */
+        .rte-filters-wrap { position:sticky; top:104px; z-index:19; background:var(--bg-main); padding:8px 0; margin-bottom:8px; }
+        .rte-chip { display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s ease; font-family:inherit; border:none; }
+        .rte-chip:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .rte-chip-status { background:#dbeafe; color:#1d4ed8; }
+        .rte-chip-pay { background:#fef3c7; color:#92400e; }
+        .rte-chip-expand { background:var(--primary); color:white; }
+        .rte-chip-reset { background:#fee2e2; color:#dc2626; font-size:10px; padding:5px 10px; }
+        .rte-chip-reset:hover { background:#dc2626; color:white; }
+        .rte-filters-expanded { animation:rteSlide 0.25s ease; }
+        @keyframes rteSlide { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+        .rte-filter-label { font-size:9px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+        .rte-filter-row { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+        .rte-fbtn { padding:6px 12px; border:1.5px solid var(--border); border-radius:20px; background:white; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.2s; display:inline-flex; align-items:center; gap:3px; }
+        .rte-fbtn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+        .rte-fbtn.s-new { border-color:#9ca3af; color:#6b7280; }
+        .rte-fbtn.s-new.active { background:#6b7280; color:white; border-color:#6b7280; }
+        .rte-fbtn.s-work { border-color:#3b82f6; color:#1d4ed8; }
+        .rte-fbtn.s-work.active { background:#3b82f6; color:white; border-color:#3b82f6; }
+        .rte-fbtn.s-confirmed { border-color:#10b981; color:#059669; }
+        .rte-fbtn.s-confirmed.active { background:#10b981; color:white; border-color:#10b981; }
+        .rte-fbtn.s-refused { border-color:#ef4444; color:#dc2626; }
+        .rte-fbtn.s-refused.active { background:#ef4444; color:white; border-color:#ef4444; }
+        .rte-fbtn.p-unpaid { border-color:#ef4444; color:#dc2626; }
+        .rte-fbtn.p-unpaid.active { background:#ef4444; color:white; border-color:#ef4444; }
+        .rte-fbtn.p-partial { border-color:#f59e0b; color:#92400e; }
+        .rte-fbtn.p-partial.active { background:#f59e0b; color:white; border-color:#f59e0b; }
+        .rte-fbtn.p-paid { border-color:#10b981; color:#059669; }
+        .rte-fbtn.p-paid.active { background:#10b981; color:white; border-color:#10b981; }
         .trip-filter-btn.dir-ua-eu { border-color: #2563eb; color: #2563eb; font-weight: 800; }
         .trip-filter-btn.dir-ua-eu:hover { background: #dbeafe; }
         .trip-filter-btn.dir-ua-eu.active { background: #2563eb; color: white; border-color: #2563eb; }
@@ -1339,38 +1361,9 @@
                 <h2 style="margin:0;font-size:18px;color:var(--text-primary);">🗺️ Маршрути</h2>
                 <button class="bs-btn" style="background:var(--primary);color:white;font-size:11px;padding:8px 14px;" onclick="loadRoutes(true)">🔄 Оновити</button>
             </div>
-            <!-- Route filters -->
-            <div id="routeFiltersBar" style="display:none;margin-bottom:12px;">
-                <!-- Тип запису -->
-                <div style="display:flex;gap:5px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-                    <button class="trip-filter-btn active" id="rteFilterAll" onclick="setRouteTypeFilter('all',this)">Всі</button>
-                    <button class="trip-filter-btn" id="rteFilterPax" onclick="setRouteTypeFilter('pax',this)">👤 Пасажири</button>
-                    <button class="trip-filter-btn" id="rteFilterParcel" onclick="setRouteTypeFilter('parcel',this)">📦 Посилки</button>
-                </div>
-                <!-- Статус + Фінанси в одному блоці -->
-                <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <!-- Статус -->
-                    <div style="flex:1;min-width:200px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
-                        <div style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📋 Статус</div>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                            <button class="trip-filter-btn active" id="rteStatusAll" onclick="setRouteStatusFilter('all',this)" style="padding:5px 10px;font-size:10px;">Всі</button>
-                            <button class="trip-filter-btn" id="rteStatusNew" onclick="setRouteStatusFilter('Новий',this)" style="padding:5px 10px;font-size:10px;border-color:#f59e0b;color:#92400e;">Новий</button>
-                            <button class="trip-filter-btn" id="rteStatusWork" onclick="setRouteStatusFilter('В роботі',this)" style="padding:5px 10px;font-size:10px;border-color:#3b82f6;color:#1d4ed8;">В роботі</button>
-                            <button class="trip-filter-btn" id="rteStatusConfirmed" onclick="setRouteStatusFilter('Підтверджено',this)" style="padding:5px 10px;font-size:10px;border-color:#10b981;color:#059669;">Підтверджено</button>
-                            <button class="trip-filter-btn" id="rteStatusRefused" onclick="setRouteStatusFilter('Відмова',this)" style="padding:5px 10px;font-size:10px;border-color:#ef4444;color:#dc2626;">Відмова</button>
-                        </div>
-                    </div>
-                    <!-- Фінанси -->
-                    <div style="flex:1;min-width:200px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
-                        <div style="font-size:9px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">💰 Оплата</div>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                            <button class="trip-filter-btn active" id="rtePayAll" onclick="setRoutePayFilter('all',this)" style="padding:5px 10px;font-size:10px;">Всі</button>
-                            <button class="trip-filter-btn" id="rtePayUnpaid" onclick="setRoutePayFilter('Не оплачено',this)" style="padding:5px 10px;font-size:10px;border-color:#ef4444;color:#dc2626;">Не оплачено</button>
-                            <button class="trip-filter-btn" id="rtePayPartial" onclick="setRoutePayFilter('Частково',this)" style="padding:5px 10px;font-size:10px;border-color:#f59e0b;color:#92400e;">Частково</button>
-                            <button class="trip-filter-btn" id="rtePayPaid" onclick="setRoutePayFilter('Оплачено',this)" style="padding:5px 10px;font-size:10px;border-color:#10b981;color:#059669;">Оплачено</button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Route filters — smart collapsible -->
+            <div id="routeFiltersBar" class="rte-filters-wrap" style="display:none;">
+                <div id="rteFiltersContent"></div>
             </div>
             <!-- Route bulk toolbar -->
             <div class="bulk-toolbar" id="routeBulkToolbar">
@@ -2278,6 +2271,7 @@ function renderPresenceBar(managers) {
 // Запускаємо після завантаження
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(startPresence, 2000);
+    loadRteFilters();
 });
 
 // ================================================================
@@ -2669,35 +2663,117 @@ function toggleRouteDashboard() {
     if (toggle) toggle.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 
-// ── Розгортальні секції фільтрів (Статуси / Фінанси) ──
-function toggleRteFilterSection(section, btn) {
-    var id = section === 'status' ? 'rteStatusFilters' : 'rtePayFilters';
-    var el = document.getElementById(id);
-    if (!el) return;
-    var isHidden = el.classList.contains('rte-filter-hidden');
-    el.classList.toggle('rte-filter-hidden', !isHidden);
-    el.classList.toggle('rte-filter-visible', isHidden);
-    btn.classList.toggle('open', isHidden);
+// ══════════════════════════════════════════════════════════
+// SMART ROUTE FILTERS — згортання, іконки, localStorage
+// ══════════════════════════════════════════════════════════
+var rteFiltersExpanded = false;
+
+var RTE_STATUS_MAP = {
+    'all': { icon: '', label: 'Всі', css: 's-new' },
+    'Новий': { icon: '🆕', label: 'Новий', css: 's-new' },
+    'В роботі': { icon: '⚙️', label: 'В роботі', css: 's-work' },
+    'Підтверджено': { icon: '✅', label: 'Підтверджено', css: 's-confirmed' },
+    'Відмова': { icon: '❌', label: 'Відмова', css: 's-refused' }
+};
+var RTE_PAY_MAP = {
+    'all': { icon: '', label: 'Всі', css: 'p-unpaid' },
+    'Не оплачено': { icon: '❌', label: 'Не оплачено', css: 'p-unpaid' },
+    'Частково': { icon: '🟡', label: 'Частково', css: 'p-partial' },
+    'Оплачено': { icon: '💰', label: 'Оплачено', css: 'p-paid' }
+};
+
+function saveRteFilters() {
+    try { localStorage.setItem('oksi_rte_filters', JSON.stringify({ type: routeTypeFilter, status: routeStatusFilter, pay: routePayFilter })); } catch(e) {}
+}
+function loadRteFilters() {
+    try {
+        var d = JSON.parse(localStorage.getItem('oksi_rte_filters') || '{}');
+        if (d.type) routeTypeFilter = d.type;
+        if (d.status) routeStatusFilter = d.status;
+        if (d.pay) routePayFilter = d.pay;
+    } catch(e) {}
 }
 
-// ── Фільтри маршруту ──
-function setRouteTypeFilter(val, btn) {
+function renderRteFilters() {
+    var el = document.getElementById('rteFiltersContent');
+    if (!el) return;
+    var hasFilters = routeStatusFilter !== 'all' || routePayFilter !== 'all' || routeTypeFilter !== 'all';
+
+    if (!rteFiltersExpanded) {
+        // ── ЗГОРНУТИЙ ── чіпси активних фільтрів + кнопка розгортання
+        var html = '<div class="rte-filters-collapsed">';
+        // Тип
+        if (routeTypeFilter === 'pax') html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">👤 Пасажири</span>';
+        else if (routeTypeFilter === 'parcel') html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">📦 Посилки</span>';
+        // Статус
+        if (routeStatusFilter !== 'all') {
+            var sm = RTE_STATUS_MAP[routeStatusFilter] || {};
+            html += '<span class="rte-chip rte-chip-status" onclick="rteExpandFilters()">' + (sm.icon||'') + ' ' + (sm.label||routeStatusFilter) + '</span>';
+        }
+        // Оплата
+        if (routePayFilter !== 'all') {
+            var pm = RTE_PAY_MAP[routePayFilter] || {};
+            html += '<span class="rte-chip rte-chip-pay" onclick="rteExpandFilters()">' + (pm.icon||'') + ' ' + (pm.label||routePayFilter) + '</span>';
+        }
+        html += '<button class="rte-chip rte-chip-expand" onclick="rteExpandFilters()">⚡ Фільтри</button>';
+        if (hasFilters) html += '<button class="rte-chip rte-chip-reset" onclick="rteResetFilters()">♻️</button>';
+        html += '</div>';
+        el.innerHTML = html;
+    } else {
+        // ── РОЗГОРНУТИЙ ── повний список кнопок
+        var html = '<div class="rte-filters-expanded">';
+        // Тип запису
+        html += '<div class="rte-filter-row" style="margin-bottom:10px;">';
+        html += '<button class="rte-fbtn s-new' + (routeTypeFilter==='all'?' active':'') + '" onclick="setRouteTypeFilter(\'all\')">Всі</button>';
+        html += '<button class="rte-fbtn s-work' + (routeTypeFilter==='pax'?' active':'') + '" onclick="setRouteTypeFilter(\'pax\')">👤 Пасажири</button>';
+        html += '<button class="rte-fbtn s-work' + (routeTypeFilter==='parcel'?' active':'') + '" onclick="setRouteTypeFilter(\'parcel\')">📦 Посилки</button>';
+        html += '</div>';
+        // Статус
+        html += '<div class="rte-filter-label">📋 СТАТУС</div>';
+        html += '<div class="rte-filter-row">';
+        ['all','Новий','В роботі','Підтверджено','Відмова'].forEach(function(k) {
+            var m = RTE_STATUS_MAP[k];
+            var isActive = routeStatusFilter === k;
+            html += '<button class="rte-fbtn ' + m.css + (isActive?' active':'') + '" onclick="setRouteStatusFilter(\'' + k + '\')">' + (m.icon ? m.icon + ' ' : '') + m.label + '</button>';
+        });
+        html += '</div>';
+        // Оплата
+        html += '<div class="rte-filter-label">💰 ОПЛАТА</div>';
+        html += '<div class="rte-filter-row">';
+        ['all','Не оплачено','Частково','Оплачено'].forEach(function(k) {
+            var m = RTE_PAY_MAP[k];
+            var isActive = routePayFilter === k;
+            html += '<button class="rte-fbtn ' + m.css + (isActive?' active':'') + '" onclick="setRoutePayFilter(\'' + k + '\')">' + (m.icon ? m.icon + ' ' : '') + m.label + '</button>';
+        });
+        html += '</div>';
+        // Скинути + Згорнути
+        html += '<div style="display:flex;gap:6px;margin-top:4px;">';
+        if (hasFilters) html += '<button class="rte-chip rte-chip-reset" onclick="rteResetFilters()">♻️ Скинути фільтри</button>';
+        html += '<button class="rte-chip" style="background:#f1f5f9;color:var(--text-secondary);" onclick="rteCollapseFilters()">▲ Згорнути</button>';
+        html += '</div>';
+        html += '</div>';
+        el.innerHTML = html;
+    }
+}
+
+function rteExpandFilters() { rteFiltersExpanded = true; renderRteFilters(); }
+function rteCollapseFilters() { rteFiltersExpanded = false; renderRteFilters(); }
+function rteResetFilters() {
+    routeTypeFilter = 'all'; routeStatusFilter = 'all'; routePayFilter = 'all';
+    saveRteFilters(); renderRteFilters(); renderRoutes();
+}
+
+function setRouteTypeFilter(val) {
     routeTypeFilter = val;
-    document.querySelectorAll('#rteFilterAll,#rteFilterPax,#rteFilterParcel').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderRoutes();
+    saveRteFilters(); renderRteFilters(); renderRoutes();
 }
-function setRouteStatusFilter(val, btn) {
+function setRouteStatusFilter(val) {
     routeStatusFilter = val;
-    document.querySelectorAll('#rteStatusAll,#rteStatusNew,#rteStatusWork,#rteStatusConfirmed,#rteStatusRefused').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderRoutes();
+    saveRteFilters(); rteFiltersExpanded = false; renderRteFilters(); renderRoutes();
 }
-function setRoutePayFilter(val, btn) {
+function setRoutePayFilter(val) {
     routePayFilter = val;
-    document.querySelectorAll('#rtePayAll,#rtePayUnpaid,#rtePayPartial,#rtePayPaid').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderRoutes();
+    saveRteFilters(); rteFiltersExpanded = false; renderRteFilters(); renderRoutes();
 }
 function getFilteredRouteRows(rows) {
     let filtered = rows;
@@ -2747,6 +2823,7 @@ function renderRoutes() {
     if (filtersBar) filtersBar.style.display = 'block';
     if (title) title.textContent = '🚐 ' + name;
     if (subtitle) subtitle.textContent = '👤 ' + paxCount + ' пасажирів · 📦 ' + parcelCount + ' посилок · ' + rows.length + ' записів';
+    renderRteFilters();
 
     const filtered = getFilteredRouteRows(rows);
     let html = '';
