@@ -2485,6 +2485,7 @@ function showRoutesView() {
 }
 
 async function loadRoutes(forceRefresh) {
+    if (forceRefresh) _routeForceRefresh = true;
     const loading = document.getElementById('routesLoading');
     const errEl = document.getElementById('routesError');
     const list = document.getElementById('routesList');
@@ -2527,9 +2528,10 @@ async function loadRoutes(forceRefresh) {
 }
 
 // Завантажити дані одного аркуша маршруту (lazy loading)
-async function loadRouteSheetData(idx) {
+async function loadRouteSheetData(idx, forceRefresh) {
     const sheet = routes[idx];
-    if (!sheet || sheet.rows !== null) return; // вже завантажено
+    if (!sheet) return;
+    if (sheet.rows !== null && !forceRefresh) return; // вже завантажено
 
     const loading = document.getElementById('routesLoading');
     if (loading) {
@@ -2538,7 +2540,7 @@ async function loadRouteSheetData(idx) {
     }
 
     try {
-        const res = await apiPost('getRouteSheet', { sheetName: sheet.sheetName });
+        const res = await apiPost('getRouteSheet', { sheetName: sheet.sheetName, forceRefresh: !!forceRefresh });
         if (loading) loading.style.display = 'none';
         if (res.ok && res.data) {
             sheet.headers = res.data.headers || [];
@@ -2635,12 +2637,15 @@ function toggleMobileRoutesList() {
 }
 
 // ── Відкрити конкретний маршрут ──
-async function openRoute(idx) {
+var _routeForceRefresh = false;
+async function openRoute(idx, forceRefresh) {
     activeRouteIdx = idx;
-    // Lazy load: завантажити дані аркуша, якщо ще не завантажені
+    var needForce = forceRefresh || _routeForceRefresh;
+    _routeForceRefresh = false;
+    // Lazy load: завантажити дані аркуша, якщо ще не завантажені або force
     try {
-        if (routes[idx] && routes[idx].rows === null) {
-            await loadRouteSheetData(idx);
+        if (routes[idx] && (routes[idx].rows === null || needForce)) {
+            await loadRouteSheetData(idx, needForce);
         }
     } catch(e) {
         showToast('❌ Помилка завантаження маршруту: ' + (e.message || ''));

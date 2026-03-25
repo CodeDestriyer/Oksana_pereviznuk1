@@ -898,6 +898,8 @@ function apiDeleteFromSheet(params) {
   var found = findRow(sh, idCol, idVal);
   if (!found) return { ok: false, error: 'Запис не знайдено' };
   sh.deleteRow(found.rowNum);
+  // Інвалідуємо кеш маршруту
+  try { CacheService.getScriptCache().remove('routeSheet_' + shName); } catch(e) {}
   return { ok: true };
 }
 
@@ -1718,9 +1720,13 @@ function apiGetRouteSheet(params) {
 
   var cache = CacheService.getScriptCache();
   var cacheKey = 'routeSheet_' + sheetName;
-  var cached = cache.get(cacheKey);
-  if (cached) {
-    return { ok: true, data: JSON.parse(cached), fromCache: true };
+  if (params.forceRefresh) {
+    cache.remove(cacheKey);
+  } else {
+    var cached = cache.get(cacheKey);
+    if (cached) {
+      return { ok: true, data: JSON.parse(cached), fromCache: true };
+    }
   }
 
   var ss = SpreadsheetApp.openById(DB.MARHRUT);
