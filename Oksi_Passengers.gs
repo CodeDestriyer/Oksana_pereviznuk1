@@ -1362,13 +1362,29 @@ function apiUpdateTrip(params) {
 // archiveTrip
 function apiArchiveTrip(params) {
   var calSheet = getSheet(SHEETS.CALENDAR);
-  if (!calSheet) return { ok: false, error: 'Аркуш не знайдений' };
+  if (!calSheet) return { ok: false, error: 'Аркуш Календар не знайдений' };
 
   var found = findRow(calSheet, 'CAL_ID', params.cal_id);
   if (!found) return { ok: false, error: 'Рейс не знайдено' };
 
-  var statusIdx = found.headers.indexOf('Статус рейсу');
-  if (statusIdx !== -1) calSheet.getRange(found.rowNum, statusIdx + 1).setValue('Архів');
+  var obj = rowToObj(found.headers, found.data);
+
+  // Переносимо рядок в Archive_crm → аркуш "Архів рейсів"
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів рейсів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів рейсів');
+    archSheet.getRange(1, 1, 1, CAL_COLS.length + 3).setValues([CAL_COLS.concat(['DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON'])]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  obj['DATE_ARCHIVE'] = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+  obj['ARCHIVED_BY'] = params.archived_by || 'Менеджер';
+  obj['ARCHIVE_REASON'] = 'Архівовано';
+  var row = archHeaders.map(function(h) { return obj[h] || ''; });
+  archSheet.appendRow(row);
+
+  // Видаляємо рядок з Календар
+  calSheet.deleteRow(found.rowNum);
 
   // Архівувати і пасажирів рейсу якщо потрібно
   if (params.archive_passengers) {
@@ -1382,20 +1398,35 @@ function apiArchiveTrip(params) {
   return { ok: true };
 }
 
-// deleteTrip — soft delete (позначаємо "Видалено" замість фізичного видалення)
+// deleteTrip — переносить в архів з позначкою "Видалено" і видаляє з Календар
 function apiDeleteTrip(params) {
   var calSheet = getSheet(SHEETS.CALENDAR);
-  if (!calSheet) return { ok: false, error: 'Аркуш не знайдений' };
+  if (!calSheet) return { ok: false, error: 'Аркуш Календар не знайдений' };
 
   var found = findRow(calSheet, 'CAL_ID', params.cal_id);
   if (!found) return { ok: false, error: 'Рейс не знайдено' };
 
+  var obj = rowToObj(found.headers, found.data);
+
   // Знімаємо пасажирів з рейсу
   clearCalIdInPassengers(params.cal_id);
 
-  // Soft delete — позначаємо статус "Видалено" замість видалення рядка
-  var statusIdx = found.headers.indexOf('Статус рейсу');
-  if (statusIdx !== -1) calSheet.getRange(found.rowNum, statusIdx + 1).setValue('Видалено');
+  // Переносимо рядок в Archive_crm → аркуш "Архів рейсів"
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів рейсів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів рейсів');
+    archSheet.getRange(1, 1, 1, CAL_COLS.length + 3).setValues([CAL_COLS.concat(['DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON'])]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  obj['DATE_ARCHIVE'] = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+  obj['ARCHIVED_BY'] = params.archived_by || 'Менеджер';
+  obj['ARCHIVE_REASON'] = 'Видалено';
+  var row = archHeaders.map(function(h) { return obj[h] || ''; });
+  archSheet.appendRow(row);
+
+  // Видаляємо рядок з Календар
+  calSheet.deleteRow(found.rowNum);
 
   return { ok: true };
 }
