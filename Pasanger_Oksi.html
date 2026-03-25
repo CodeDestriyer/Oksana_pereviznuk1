@@ -2940,25 +2940,25 @@ function toggleRouteSelect(rteId, checked) {
     const card = document.getElementById('rte-card-' + rteId);
     if (card) card.classList.toggle('selected', checked);
 }
+var _routeToolbarForceOpen = false;
+
 function toggleRouteSelectAll() {
     const sheet = routes[activeRouteIdx];
     if (!sheet) return;
     const filtered = getFilteredRouteRows(sheet.rows || []);
-    if (routeSelectedIds.size >= filtered.length) {
+    if (routeSelectedIds.size > 0) {
+        // Є вибрані — знімаємо всі
         routeSelectedIds.clear();
     } else {
+        // Немає вибраних — вибираємо всі
         filtered.forEach(r => routeSelectedIds.add(r['RTE_ID']));
     }
-    // Не ховаємо toolbar — тільки оновлюємо лічильник
-    const ct = document.getElementById('routeBulkCount');
-    if (ct) ct.textContent = routeSelectedIds.size + ' обрано';
+    _routeToolbarForceOpen = true;
     renderRoutes();
-    // Залишаємо toolbar видимим
-    const tb = document.getElementById('routeBulkToolbar');
-    if (tb) tb.classList.add('show');
 }
 function clearRouteSelection() {
     routeSelectedIds.clear();
+    _routeToolbarForceOpen = false;
     updateRouteBulkToolbar();
     renderRoutes();
 }
@@ -2966,7 +2966,7 @@ function updateRouteBulkToolbar() {
     const tb = document.getElementById('routeBulkToolbar');
     const ct = document.getElementById('routeBulkCount');
     if (!tb) return;
-    if (routeSelectedIds.size > 0) {
+    if (routeSelectedIds.size > 0 || _routeToolbarForceOpen) {
         tb.classList.add('show');
         ct.textContent = routeSelectedIds.size + ' обрано';
     } else {
