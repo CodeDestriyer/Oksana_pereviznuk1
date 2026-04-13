@@ -1,10 +1,82 @@
 // ================================================================
 // Borispol_Vip_Travel_Passengers.gs — CRM Пасажири (менеджери)
-// Живе в таблиці: Passengers_crm_v4
+// Живе в таблиці: Passengers_crm_Oksi
 // Deploy: Web App → доступ "Будь-хто"
 // ================================================================
-// Архітектура: 4 окремі скрипти (Passengers, Posylki, Driver, Client)
-// Кожен має свій doPost, свій URL, свою чергу запитів.
+//
+// СТРУКТУРА КОДУ (для розробника):
+//
+// ── КОНФІГ (рядки 10-83) ──────────────────────────────────────
+//   DB{}          — ID всіх Google Sheets таблиць системи
+//   SS_ID         — головна таблиця (Passengers)
+//   SHEETS{}      — назви аркушів в Passengers (Україна-ЄВ, Європа-УК, Календар...)
+//   PAX_COLS[]    — колонки пасажирів
+//   CAL_COLS[]    — колонки рейсів (Календар)
+//   LAYOUTS{}     — розкладки місць в авто
+//
+// ── HELPERS (рядки ~86-115) ───────────────────────────────────
+//   getSheet()    — відкриває аркуш з SS_ID
+//   writeLog()    — логує дію в Archive_crm → "Логи"
+//
+// ── ПАСАЖИРИ: CRUD (рядки ~116-900) ──────────────────────────
+//   apiGetAll()            — отримати всіх пасажирів (GET/POST)
+//   apiAddPassenger()      — додати пасажира
+//   apiUpdatePassenger()   — оновити пасажира
+//   apiUpdateField()       — оновити одне поле
+//   apiBulkUpdateField()   — масове оновлення поля
+//   apiClonePassenger()    — клонувати пасажира
+//   apiMoveDirection()     — змінити напрям (UA-EU ↔ EU-UA)
+//   apiCheckDuplicate()    — перевірка дублікатів
+//
+// ── ВИДАЛЕННЯ / АРХІВУВАННЯ (рядки ~873-1110) ────────────────
+//   apiDeletePassenger()   — soft delete (архівує з позначкою "Видалено")
+//   apiDeleteFromSheet()   — фізичне видалення рядка (для маршрутів)
+//   apiBulkDelete()        — масове soft delete
+//   apiArchivePassenger()  — перенос пасажира в Archive_crm → "Архів"
+//   apiRestorePassenger()  — відновлення з архіву назад в Passengers
+//   apiDeleteFromArchive() — ЗАБЛОКОВАНО (архів = назавжди)
+//   apiGetArchive()        — отримати записи з архіву
+//
+// ── РЕЙСИ: CRUD (рядки ~1110-1460) ──────────────────────────
+//   apiGetTrips()          — отримати рейси (аркуш Календар)
+//   apiCreateTrip()        — створити рейс
+//   apiUpdateTrip()        — оновити рейс
+//   apiAssignTrip()        — призначити пасажира на рейс
+//   apiUnassignTrip()      — зняти з рейсу
+//   apiReassignTrip()      — пересадити на інший рейс
+//   apiArchiveTrip()       — архівувати рейс → Archive_crm → "Архів рейсів"
+//   apiDeleteTrip()        — soft delete рейсу → Archive_crm → "Архів рейсів"
+//   apiDuplicateTrip()     — дублювати рейс на нові дати
+//   clearCalIdInPassengers() — зняти CAL_ID у пасажирів рейсу
+//
+// ── МАРШРУТИ (рядки ~1460-2000) ─────────────────────────────
+//   apiGetRoutesList()     — список маршрутів (тільки Маршрут_*)
+//   apiGetRouteSheet()     — дані одного маршруту (lazy load + кеш 3хв)
+//   apiAddToRoute()        — додати ліда в маршрут (case-insensitive маппінг)
+//   apiUpdateRouteField()  — оновити поле ліда в маршруті
+//   apiCreateRoute()       — створити новий маршрут (копіює шаблони)
+//   apiDeleteRoute()       — видалити маршрут (архівує → "Архів маршрутів")
+//   apiDeleteLinkedSheets() — видалити Відправка_/Витрати_ (архівує)
+//   archiveSheetToArchive() — хелпер: копіює аркуш в архів перед видаленням
+//
+// ── АВТОПАРК / РОЗСАДКА (рядки ~2000+) ─────────────────────
+//   apiGetAutopark()       — список авто
+//   apiGetStats()          — статистика
+//
+// ── РОУТЕР: doGet / doPost (рядки ~2070+) ───────────────────
+//   doGet()   — обробка GET запитів (ping, getAll, getTrips, getStats)
+//   doPost()  — обробка POST запитів (всі дії через action)
+//
+// ── ПРИНЦИП ВИДАЛЕННЯ / АРХІВУВАННЯ ─────────────────────────
+//   Нічого не зникає назавжди! Кожна дія:
+//   1. Копіює запис в Archive_crm (відповідний аркуш)
+//   2. Видаляє з основної таблиці (deleteRow)
+//   Аркуші в Archive_crm:
+//     "Архів"           — пасажири
+//     "Архів рейсів"    — рейси
+//     "Архів маршрутів"  — записи маршрутів/відправок/витрат
+//     "Логи"            — логи дій
+//
 // ================================================================
 
 var HEADER_ROW = 1;
@@ -870,21 +942,40 @@ function updateCalendarOccupancy(calId) {
 // 5. PASSENGERS — DELETE / ARCHIVE
 // ══════════════════════════════════════════════════════════════
 
-// deletePassenger — Повне видалення
+// deletePassenger — Архівує з позначкою "Видалено" (soft delete)
 function apiDeletePassenger(params) {
-  var shName = resolveSheet(params);
-  var sh = getSheet(shName);
-  if (!sh) return { ok: false, error: 'Аркуш не знайдено' };
-  var found = findRow(sh, 'PAX_ID', params.pax_id);
+  // Soft delete — архівуємо замість фізичного видалення
+  var result = apiArchivePassenger({
+    pax_id: params.pax_id,
+    pax_ids: params.pax_ids || [],
+    reason: 'Видалено',
+    archived_by: params.manager || params.archived_by || 'Менеджер',
+    sheet: params.sheet
+  });
+
+  return { ok: result.ok, message: result.ok ? 'Пасажира переміщено в архів з позначкою "Видалено"' : result.error };
+}
+
+// deleteFromSheet — Фізичне видалення рядка з аркуша (для маршрутів)
+function apiDeleteFromSheet(params) {
+  var shName = params.sheet;
+  if (!shName) return { ok: false, error: 'sheet не вказано' };
+  // Маршрути живуть в DB.MARHRUT, пасажири в SS_ID
+  var ssId = shName.indexOf('Маршрут_') === 0 || shName.indexOf('Відправка_') === 0 || shName.indexOf('Витрати_') === 0 ? DB.MARHRUT : SS_ID;
+  var sh = SpreadsheetApp.openById(ssId).getSheetByName(shName);
+  if (!sh) return { ok: false, error: 'Аркуш не знайдено: ' + shName };
+  var idCol = params.id_col || 'RTE_ID';
+  var idVal = params.id_val || params.pax_id || params.rte_id;
+  if (!idVal) return { ok: false, error: 'ID не вказано' };
+  var found = findRow(sh, idCol, idVal);
   if (!found) return { ok: false, error: 'Запис не знайдено' };
-
-  var obj = rowToObj(found.headers, found.data);
-  var calId = obj['CAL_ID'];
-
   sh.deleteRow(found.rowNum);
-
-  if (calId) updateCalendarOccupancy(calId);
-
+  // Інвалідуємо кеш маршруту і списку
+  try {
+    var c = CacheService.getScriptCache();
+    c.remove('routeSheet_' + shName);
+    c.remove('routesList_v2');
+  } catch(e) {}
   return { ok: true };
 }
 
@@ -1349,13 +1440,29 @@ function apiUpdateTrip(params) {
 // archiveTrip
 function apiArchiveTrip(params) {
   var calSheet = getSheet(SHEETS.CALENDAR);
-  if (!calSheet) return { ok: false, error: 'Аркуш не знайдений' };
+  if (!calSheet) return { ok: false, error: 'Аркуш Календар не знайдений' };
 
   var found = findRow(calSheet, 'CAL_ID', params.cal_id);
   if (!found) return { ok: false, error: 'Рейс не знайдено' };
 
-  var statusIdx = found.headers.indexOf('Статус рейсу');
-  if (statusIdx !== -1) calSheet.getRange(found.rowNum, statusIdx + 1).setValue('Архів');
+  var obj = rowToObj(found.headers, found.data);
+
+  // Переносимо рядок в Archive_crm → аркуш "Архів рейсів"
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів рейсів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів рейсів');
+    archSheet.getRange(1, 1, 1, CAL_COLS.length + 3).setValues([CAL_COLS.concat(['DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON'])]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  obj['DATE_ARCHIVE'] = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+  obj['ARCHIVED_BY'] = params.archived_by || 'Менеджер';
+  obj['ARCHIVE_REASON'] = 'Архівовано';
+  var row = archHeaders.map(function(h) { return obj[h] || ''; });
+  archSheet.appendRow(row);
+
+  // Видаляємо рядок з Календар
+  calSheet.deleteRow(found.rowNum);
 
   // Архівувати і пасажирів рейсу якщо потрібно
   if (params.archive_passengers) {
@@ -1369,20 +1476,35 @@ function apiArchiveTrip(params) {
   return { ok: true };
 }
 
-// deleteTrip — soft delete (позначаємо "Видалено" замість фізичного видалення)
+// deleteTrip — переносить в архів з позначкою "Видалено" і видаляє з Календар
 function apiDeleteTrip(params) {
   var calSheet = getSheet(SHEETS.CALENDAR);
-  if (!calSheet) return { ok: false, error: 'Аркуш не знайдений' };
+  if (!calSheet) return { ok: false, error: 'Аркуш Календар не знайдений' };
 
   var found = findRow(calSheet, 'CAL_ID', params.cal_id);
   if (!found) return { ok: false, error: 'Рейс не знайдено' };
 
+  var obj = rowToObj(found.headers, found.data);
+
   // Знімаємо пасажирів з рейсу
   clearCalIdInPassengers(params.cal_id);
 
-  // Soft delete — позначаємо статус "Видалено" замість видалення рядка
-  var statusIdx = found.headers.indexOf('Статус рейсу');
-  if (statusIdx !== -1) calSheet.getRange(found.rowNum, statusIdx + 1).setValue('Видалено');
+  // Переносимо рядок в Archive_crm → аркуш "Архів рейсів"
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів рейсів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів рейсів');
+    archSheet.getRange(1, 1, 1, CAL_COLS.length + 3).setValues([CAL_COLS.concat(['DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON'])]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  obj['DATE_ARCHIVE'] = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+  obj['ARCHIVED_BY'] = params.archived_by || 'Менеджер';
+  obj['ARCHIVE_REASON'] = 'Видалено';
+  var row = archHeaders.map(function(h) { return obj[h] || ''; });
+  archSheet.appendRow(row);
+
+  // Видаляємо рядок з Календар
+  calSheet.deleteRow(found.rowNum);
 
   return { ok: true };
 }
@@ -1636,34 +1758,30 @@ function apiGetRoutesList(params) {
   for (var s = 0; s < allSheets.length; s++) {
     var sheet = allSheets[s];
     var sheetName = sheet.getName();
-    if (/^(Лог|Конфіг|Config|Log|Шаблон|Template)/i.test(sheetName)) continue;
+    // Тільки Маршрут_* аркуші, пропускаємо Відправка_, Витрати_, шаблони, логи
+    if (sheetName.indexOf('Маршрут_') !== 0) continue;
+    if (sheetName === 'Маршрут_Шаблон') continue;
 
     var lastRow = sheet.getLastRow();
-    var lastCol = sheet.getLastColumn();
     var rowCount = lastRow >= 2 ? lastRow - 1 : 0;
-    var paxCount = 0;
-    var parcelCount = 0;
 
-    if (rowCount > 0 && lastCol > 0) {
-      var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-      var typeColIdx = -1;
-      for (var h = 0; h < headers.length; h++) {
-        if (String(headers[h]).trim() === 'Тип запису') { typeColIdx = h; break; }
-      }
-      if (typeColIdx >= 0) {
-        var typeData = sheet.getRange(2, typeColIdx + 1, lastRow - 1, 1).getValues();
+    var paxCount = 0, parcelCount = 0;
+    if (rowCount > 0) {
+      // Читаємо тільки колонку B (Тип запису) — один getRange замість двох
+      try {
+        var typeData = sheet.getRange(2, 2, rowCount, 1).getValues();
         for (var r = 0; r < typeData.length; r++) {
           var val = String(typeData[r][0] || '');
           if (val.indexOf('Пасажир') >= 0) paxCount++;
           else if (val.indexOf('Посилк') >= 0) parcelCount++;
         }
-      }
+      } catch(e) { /* аркуш може бути іншої структури */ }
     }
 
     result.push({ sheetName: sheetName, rowCount: rowCount, paxCount: paxCount, parcelCount: parcelCount });
   }
 
-  cache.put(cacheKey, JSON.stringify(result), 300); // кеш 5 хв
+  cache.put(cacheKey, JSON.stringify(result), 300);
   return { ok: true, data: result };
 }
 
@@ -1674,9 +1792,13 @@ function apiGetRouteSheet(params) {
 
   var cache = CacheService.getScriptCache();
   var cacheKey = 'routeSheet_' + sheetName;
-  var cached = cache.get(cacheKey);
-  if (cached) {
-    return { ok: true, data: JSON.parse(cached), fromCache: true };
+  if (params.forceRefresh) {
+    cache.remove(cacheKey);
+  } else {
+    var cached = cache.get(cacheKey);
+    if (cached) {
+      return { ok: true, data: JSON.parse(cached), fromCache: true };
+    }
   }
 
   var ss = SpreadsheetApp.openById(DB.MARHRUT);
@@ -1689,8 +1811,10 @@ function apiGetRouteSheet(params) {
     return { ok: true, data: { sheetName: sheetName, headers: [], rows: [], rowCount: 0 } };
   }
 
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
-  var dataRows = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  // Один getRange для всіх даних (заголовки + дані) — швидше ніж два окремих
+  var allData = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+  var headers = allData[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
+  var dataRows = allData.slice(1);
 
   var rows = [];
   for (var i = 0; i < dataRows.length; i++) {
@@ -1850,20 +1974,35 @@ function apiAddToRoute(params) {
 
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) { return String(h).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim(); });
 
+  var added = 0;
   for (var i = 0; i < leads.length; i++) {
     var lead = leads[i];
-    var row = headers.map(function(h) { return lead[h] || ''; });
-    sheet.appendRow(row);
+    // Маппінг: шукаємо значення за точним ключем або нормалізованим
+    var row = headers.map(function(h) {
+      if (lead[h] !== undefined && lead[h] !== null) return lead[h];
+      // Пошук без урахування пробілів/регістру
+      var keys = Object.keys(lead);
+      for (var k = 0; k < keys.length; k++) {
+        if (keys[k].trim().toLowerCase() === h.trim().toLowerCase()) return lead[keys[k]];
+      }
+      return '';
+    });
+    // Перевірка що рядок не повністю порожній
+    var hasData = row.some(function(v) { return String(v).trim() !== ''; });
+    if (hasData) {
+      sheet.appendRow(row);
+      added++;
+    }
   }
 
   // Інвалідуємо кеш маршруту щоб обидва CRM бачили актуальні дані
   try {
     var cache = CacheService.getScriptCache();
     cache.remove('routeSheet_' + sheetName);
-    cache.remove('routesList_v1');
+    cache.remove('routesList_v2');
   } catch(e) { /* ignore */ }
 
-  return { ok: true, added: leads.length };
+  return { ok: true, added: added };
 }
 
 /**
@@ -1927,6 +2066,9 @@ function apiDeleteRoute(params) {
     return { ok: false, error: 'Неможливо видалити останній аркуш' };
   }
 
+  // Архівуємо всі записи маршруту перед видаленням
+  archiveSheetToArchive(sheet, 'Маршрут_' + name, 'Видалено (маршрут)', params.archived_by || 'Менеджер');
+
   ss.deleteSheet(sheet);
   return { ok: true };
 }
@@ -1947,12 +2089,50 @@ function apiDeleteLinkedSheets(params) {
   for (var i = 0; i < variants.length; i++) {
     var s = ss.getSheetByName(variants[i]);
     if (s && ss.getSheets().length > 1) {
+      // Архівуємо записи перед видаленням
+      archiveSheetToArchive(s, variants[i], 'Видалено (маршрут)', params.archived_by || 'Менеджер');
       ss.deleteSheet(s);
       deleted.push(variants[i]);
     }
   }
 
   return { ok: true, deleted: deleted };
+}
+
+/**
+ * Хелпер: копіює всі записи аркуша в Archive_crm → "Архів маршрутів"
+ */
+function archiveSheetToArchive(sheet, sheetName, reason, archivedBy) {
+  var lastCol = sheet.getLastColumn();
+  var lastRow = sheet.getLastRow();
+  if (lastCol < 1 || lastRow < 2) return; // Порожній аркуш
+
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+  var archSS = SpreadsheetApp.openById(DB.ARCHIVE);
+  var archSheet = archSS.getSheetByName('Архів маршрутів');
+  if (!archSheet) {
+    archSheet = archSS.insertSheet('Архів маршрутів');
+    var archHeaders = headers.concat(['SOURCE_SHEET', 'DATE_ARCHIVE', 'ARCHIVED_BY', 'ARCHIVE_REASON']);
+    archSheet.getRange(1, 1, 1, archHeaders.length).setValues([archHeaders]);
+  }
+  var archHeaders = archSheet.getRange(1, 1, 1, archSheet.getLastColumn()).getValues()[0];
+  var now = Utilities.formatDate(new Date(), 'Europe/Kiev', 'dd.MM.yyyy HH:mm');
+
+  for (var i = 0; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = data[i][j];
+    }
+    obj['SOURCE_SHEET'] = sheetName;
+    obj['DATE_ARCHIVE'] = now;
+    obj['ARCHIVED_BY'] = archivedBy;
+    obj['ARCHIVE_REASON'] = reason;
+
+    var row = archHeaders.map(function(h) { return obj[h] !== undefined ? obj[h] : ''; });
+    archSheet.appendRow(row);
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2161,6 +2341,7 @@ function doPost(e) {
 
       // ── PASSENGERS DELETE/ARCHIVE ──
       case 'deletePassenger':    result = apiDeletePassenger(body); break;
+      case 'deleteFromSheet':    result = apiDeleteFromSheet(body); break;
       case 'bulkDelete':         result = apiBulkDelete(body); break;
       case 'archivePassenger':   result = apiArchivePassenger(body); break;
       case 'restorePassenger':   result = apiRestorePassenger(body); break;

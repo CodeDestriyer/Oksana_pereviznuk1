@@ -898,12 +898,12 @@
         /* === BULK TOOLBAR: панель масових дій при виборі галочок ===
            Мобільна: плаваюча панель внизу екрану
            ПК (>901px): лівий сайдбар на всю висоту, 300px шириною */
-        .bulk-toolbar { position: fixed; bottom: 60px; left: 0; right: 0; background: var(--primary); color: white; padding: 10px 8px; border-radius: 0; z-index: 90; display: none; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); font-size: 12px; font-weight: 600; }
+        .bulk-toolbar { position: fixed; bottom: 60px; left: 0; right: 0; background: var(--primary); color: white; padding: 8px 6px; border-radius: 0; z-index: 90; display: none; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); font-size: 12px; font-weight: 600; }
         .bulk-toolbar.show { display: block; }
         .bulk-toolbar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .bulk-toolbar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .bulk-toolbar-count { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-        .bulk-toolbar-btn { padding: 10px 6px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; min-height: 42px; width: 100%; text-align: center; }
+        .bulk-toolbar-count { background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .bulk-toolbar-btn { padding: 7px 4px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.2s; min-height: 34px; width: 100%; text-align: center; }
         .bulk-toolbar-btn.select-all { background: rgba(255,255,255,0.2); color: white; }
         .bulk-toolbar-btn.select-all:hover { background: rgba(255,255,255,0.35); }
         .bulk-toolbar-btn.assign { background: var(--orange); color: white; }
@@ -1089,7 +1089,6 @@
                 </div>
                 <div class="side-menu-item" onclick="showArchiveView(); closeSideMenu();">
                     <span class="side-menu-item-left">📦 Архів</span>
-                    <span class="side-menu-item-count" id="mobileCountArchive">0</span>
                 </div>
             </div>
         </div>
@@ -1137,6 +1136,9 @@
         <!-- Кнопка додавання -->
         <div class="side-menu-item" onclick="openAddModal(); closeSideMenu();" style="background:rgba(255,255,255,0.1);">
             <span class="side-menu-item-left">➕ Новий пасажир</span>
+        </div>
+        <div class="side-menu-item" onclick="openVideoModal(); closeSideMenu();" style="background:rgba(255,255,255,0.05);">
+            <span class="side-menu-item-left">📹 Навчання</span>
         </div>
     </div>
 </div>
@@ -1220,7 +1222,6 @@
 
                 <div class="pc-sidebar-item archive" id="pcArchive" onclick="showArchiveView()">
                     <span><span class="item-icon">📦</span><span class="item-text">Архів</span></span>
-                    <span class="item-count" id="pcCountArchive">0</span>
                 </div>
             </div>
         </div>
@@ -1275,6 +1276,7 @@
         <div class="pc-sidebar-section">
             <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
                 <button onclick="openAddModal()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">➕ Новий пасажир</button>
+                <button onclick="openVideoModal()" style="width:100%;padding:10px;background:white;color:var(--primary);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📹 Навчання</button>
             </div>
         </div>
     </aside>
@@ -1370,12 +1372,14 @@
             <!-- Route bulk toolbar -->
             <div class="bulk-toolbar" id="routeBulkToolbar">
                 <span class="bulk-toolbar-count" id="routeBulkCount">0 обрано</span>
-                <button class="bulk-toolbar-btn select-all" onclick="toggleRouteSelectAll()">☑ Вибрати всі</button>
-                <button class="bulk-toolbar-btn" style="background:#f3f4f6;color:#6b7280;" onclick="routeBulkArchive()">📦 Архів</button>
-                <button class="bulk-toolbar-btn" style="background:#fee2e2;color:#dc2626;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
-                <button class="bulk-toolbar-btn" style="background:#7f1d1d;color:white;" onclick="routeBulkDeleteFull()">🗑️ Видалити</button>
-                <button class="bulk-toolbar-btn" style="background:#ede9fe;color:#7c3aed;" onclick="routeBulkTransfer()">🔄 Пересадити</button>
-                <button class="bulk-toolbar-btn cancel" onclick="clearRouteSelection()">✕ Скасувати</button>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;">
+                    <button class="bulk-toolbar-btn select-all" onclick="toggleRouteSelectAll()">☑ Вибрати всі</button>
+                    <button class="bulk-toolbar-btn cancel" onclick="clearRouteSelection()">✕ Скасувати</button>
+                    <button class="bulk-toolbar-btn select-all" onclick="routeBulkTransfer()">🔄 Перенести</button>
+                    <button class="bulk-toolbar-btn select-all" onclick="routeBulkArchive()">📦 Архів</button>
+                    <button class="bulk-toolbar-btn" style="background:#dc2626;color:white;" onclick="routeBulkDeleteFull()">🗑️ Видалити</button>
+                    <button class="bulk-toolbar-btn" style="background:rgba(220,38,38,0.5);color:white;" onclick="routeBulkDeleteFromRoute()">🗑️ З маршруту</button>
+                </div>
             </div>
             <div id="routesLoading" style="display:none;text-align:center;padding:40px;color:var(--text-secondary);font-size:13px;">⏳ Завантаження маршрутів...</div>
             <div id="routesError" style="display:none;text-align:center;padding:40px;color:#dc2626;font-size:13px;"></div>
@@ -1964,7 +1968,7 @@ function initMapsAPI() {
 // ================================================================
 // CONFIG
 // ================================================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbz7xrFMXYJMJh3ZyBvIBmsoxZIqxAHY0NXT8GYt-AWADVS0t0cktIv4r8XfOmeUTeHl/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbw_q27cdothyrz4_Y_B_ZPhXSgIYRR0rACDTLRSir5psLKeqfIasTP_xYQQrczRlI8/exec';
 const COL_MAP = {
     pax_id:'PAX_ID', smartId:'Ід_смарт', direction:'Напрям', sourceSheet:'SOURCE_SHEET',
     dateCreated:'Дата створення', name:'Піб', phone:'Телефон пасажира',
@@ -2318,13 +2322,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoader('Завантаження...');
     Promise.all([
         apiPost('getAll', { sheet: 'all' }),
-        apiPost('getTrips', { filter: {} }),
-        apiPost('getArchive', {})
-    ]).then(([paxRes, tripRes, archRes]) => {
+        apiPost('getTrips', { filter: {} })
+    ]).then(([paxRes, tripRes]) => {
         hideLoader();
         if (paxRes.ok) passengers = paxRes.data;
         if (tripRes.ok) trips = tripRes.data;
-        if (archRes.ok) archivedPassengers = archRes.rows || [];
         updateAllCounts();
         updateTripFilterDropdown();
         updateTripAutoFilterDropdown();
@@ -2333,7 +2335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadRoutes();
     }).catch(() => { hideLoader(); render(); });
 
-    setInterval(silentSync, 60000);
+    setInterval(silentSync, 30000);
 
     // Автозапуск навчання якщо вже залогінений і ще не проходив
     checkOnboardingAutoStart();
@@ -2349,13 +2351,11 @@ function silentSync(manual, force) {
         return Promise.all([
             apiPost('getAll', { sheet: 'all' }),
             apiPost('getTrips', { filter: {} }),
-            apiPost('getRoutesList', {}),
-            apiPost('getArchive', {})
-        ]).then(([paxRes, tripRes, routeRes, archRes]) => {
+            apiPost('getRoutesList', {})
+        ]).then(([paxRes, tripRes, routeRes]) => {
             hideLoader();
             if (paxRes.ok) { passengers = paxRes.data; applyOptimizedOrder(); }
             if (tripRes.ok) trips = tripRes.data;
-            if (archRes.ok) archivedPassengers = archRes.rows || [];
             if (routeRes.ok && routeRes.data) {
                 var newList = routeRes.data;
                 allRouteSheets = newList.map(function(s) {
@@ -2485,6 +2485,7 @@ function showRoutesView() {
 }
 
 async function loadRoutes(forceRefresh) {
+    if (forceRefresh) _routeForceRefresh = true;
     const loading = document.getElementById('routesLoading');
     const errEl = document.getElementById('routesError');
     const list = document.getElementById('routesList');
@@ -2527,9 +2528,10 @@ async function loadRoutes(forceRefresh) {
 }
 
 // Завантажити дані одного аркуша маршруту (lazy loading)
-async function loadRouteSheetData(idx) {
+async function loadRouteSheetData(idx, forceRefresh) {
     const sheet = routes[idx];
-    if (!sheet || sheet.rows !== null) return; // вже завантажено
+    if (!sheet) return;
+    if (sheet.rows !== null && !forceRefresh) return; // вже завантажено
 
     const loading = document.getElementById('routesLoading');
     if (loading) {
@@ -2538,7 +2540,7 @@ async function loadRouteSheetData(idx) {
     }
 
     try {
-        const res = await apiPost('getRouteSheet', { sheetName: sheet.sheetName });
+        const res = await apiPost('getRouteSheet', { sheetName: sheet.sheetName, forceRefresh: !!forceRefresh });
         if (loading) loading.style.display = 'none';
         if (res.ok && res.data) {
             sheet.headers = res.data.headers || [];
@@ -2575,6 +2577,14 @@ function renderRouteSidebar() {
     const pcLoading = document.getElementById('pcRoutesLoading');
     if (pcLoading) pcLoading.style.display = 'none';
 
+    // Рахуємо лічильники один раз і зберігаємо
+    routes.forEach(function(sheet) {
+        if (sheet.rows !== null) {
+            sheet.paxCount = sheet.rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
+            sheet.parcelCount = sheet.rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
+        }
+    });
+
     // PC sidebar
     const pcList = document.getElementById('pcRoutesList');
     if (pcList) {
@@ -2583,17 +2593,10 @@ function renderRouteSidebar() {
         } else {
             pcList.innerHTML = routes.map((sheet, idx) => {
                 const name = (sheet.sheetName || '').replace('Маршрут_', '');
-                const rows = sheet.rows;
-                const isLoaded = rows !== null;
                 const isActive = activeRouteIdx === idx && currentView === 'routes';
-                let countLabel = '';
-                if (isLoaded) {
-                    const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
-                    const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + pax + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + parcels + '</span>';
-                } else {
-                    countLabel = '👤<span style="color:#dc2626;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#dc2626;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
-                }
+                const pax = sheet.paxCount || 0;
+                const parcels = sheet.parcelCount || 0;
+                const countLabel = '👤<span style="color:#d97706;font-weight:800;">' + pax + '</span> 📦<span style="color:#d97706;font-weight:800;">' + parcels + '</span>';
                 return `<div class="pc-sidebar-item route-sidebar-item${isActive ? ' active' : ''}" onclick="openRoute(${idx})" style="position:relative;">
                     <span>
                         <span class="item-icon">🗺️</span>
@@ -2615,16 +2618,9 @@ function renderRouteSidebar() {
         } else {
             mobList.innerHTML = routes.map((sheet, idx) => {
                 const name = (sheet.sheetName || '').replace('Маршрут_', '');
-                const rows = sheet.rows;
-                const isLoaded = rows !== null;
-                let countLabel = '';
-                if (isLoaded) {
-                    const pax = rows.filter(r => (r['Тип запису'] || '').includes('Пасажир')).length;
-                    const parcels = rows.filter(r => (r['Тип запису'] || '').includes('Посилк')).length;
-                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + pax + '</span> 📦<span style="color:#f87171;font-weight:800;">' + parcels + '</span>';
-                } else {
-                    countLabel = '👤<span style="color:#f87171;font-weight:800;">' + (sheet.paxCount || 0) + '</span> 📦<span style="color:#f87171;font-weight:800;">' + (sheet.parcelCount || 0) + '</span>';
-                }
+                const pax = sheet.paxCount || 0;
+                const parcels = sheet.parcelCount || 0;
+                const countLabel = '👤<span style="color:#fbbf24;font-weight:800;">' + pax + '</span> 📦<span style="color:#fbbf24;font-weight:800;">' + parcels + '</span>';
                 return `<div class="side-menu-item" onclick="openRoute(${idx}); closeSideMenu();" style="padding:8px 14px;font-size:12px;">
                     <span class="side-menu-item-left">🗺️ ${name}</span>
                     <span style="font-size:10px;letter-spacing:0.5px;">${countLabel}</span>
@@ -2641,14 +2637,24 @@ function toggleMobileRoutesList() {
 }
 
 // ── Відкрити конкретний маршрут ──
-async function openRoute(idx) {
+var _routeForceRefresh = false;
+async function openRoute(idx, forceRefresh) {
     activeRouteIdx = idx;
-    // Lazy load: завантажити дані аркуша, якщо ще не завантажені
+    // Одразу підсвітити активний маршрут в sidebar
+    document.querySelectorAll('.route-sidebar-item').forEach(function(el, i) {
+        el.classList.toggle('active', i === idx);
+    });
+    var needForce = forceRefresh || _routeForceRefresh;
+    _routeForceRefresh = false;
+    // Lazy load: завантажити дані аркуша, якщо ще не завантажені або force
     try {
-        if (routes[idx] && routes[idx].rows === null) {
-            await loadRouteSheetData(idx);
+        if (routes[idx] && (routes[idx].rows === null || needForce)) {
+            showLoader('Завантаження маршруту...');
+            await loadRouteSheetData(idx, needForce);
+            hideLoader();
         }
     } catch(e) {
+        hideLoader();
         showToast('❌ Помилка завантаження маршруту: ' + (e.message || ''));
     }
     showRoutesView();
@@ -2938,19 +2944,26 @@ function toggleRouteSelect(rteId, checked) {
     const card = document.getElementById('rte-card-' + rteId);
     if (card) card.classList.toggle('selected', checked);
 }
+var _routeToolbarForceOpen = false;
+
 function toggleRouteSelectAll() {
     const sheet = routes[activeRouteIdx];
     if (!sheet) return;
     const filtered = getFilteredRouteRows(sheet.rows || []);
-    if (routeSelectedIds.size >= filtered.length) {
+    const allSelected = filtered.length > 0 && filtered.every(r => routeSelectedIds.has(r['RTE_ID']));
+    if (allSelected) {
+        // Всі вибрані — знімаємо всі
         routeSelectedIds.clear();
     } else {
+        // Не всі вибрані — вибираємо всі
         filtered.forEach(r => routeSelectedIds.add(r['RTE_ID']));
     }
+    _routeToolbarForceOpen = true;
     renderRoutes();
 }
 function clearRouteSelection() {
     routeSelectedIds.clear();
+    _routeToolbarForceOpen = false;
     updateRouteBulkToolbar();
     renderRoutes();
 }
@@ -2958,7 +2971,7 @@ function updateRouteBulkToolbar() {
     const tb = document.getElementById('routeBulkToolbar');
     const ct = document.getElementById('routeBulkCount');
     if (!tb) return;
-    if (routeSelectedIds.size > 0) {
+    if (routeSelectedIds.size > 0 || _routeToolbarForceOpen) {
         tb.classList.add('show');
         ct.textContent = routeSelectedIds.size + ' обрано';
     } else {
@@ -3085,16 +3098,16 @@ function openRouteEditModal(rteId, sheetName) {
 
 // ── Видалити лід з маршруту ──
 async function deleteFromRoute(rteId, sheetName, leadName) {
-    showConfirm('Видалити «' + leadName + '» з маршруту?', async (yes) => {
+    showConfirm('Прибрати «' + leadName + '» з маршруту? (лід залишиться в CRM)', async (yes) => {
         if (!yes) return;
         showLoader('Видалення з маршруту...');
-        const res = await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
+        const res = await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
         hideLoader();
         if (res.ok) {
             const sheet = routes[activeRouteIdx];
             if (sheet) sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             routeSelectedIds.delete(rteId);
-            showToast('✅ Видалено з маршруту');
+            showToast('✅ Прибрано з маршруту');
             renderRoutes();
         } else {
             showToast('❌ ' + (res.error || 'Помилка'));
@@ -3102,23 +3115,25 @@ async function deleteFromRoute(rteId, sheetName, leadName) {
     });
 }
 
-// ── Bulk видалити з маршруту ──
+// ── Bulk видалити з маршруту (тільки з аркуша, ліди залишаються в CRM) ──
 async function routeBulkDeleteFromRoute() {
     if (routeSelectedIds.size === 0) return;
     const sheet = routes[activeRouteIdx];
     if (!sheet) return;
-    showConfirm('Видалити ' + routeSelectedIds.size + ' записів з маршруту?', async (yes) => {
+    showConfirm('Прибрати ' + routeSelectedIds.size + ' записів з маршруту? (ліди залишаться в CRM)', async (yes) => {
         if (!yes) return;
-        showLoader('Видалення...');
+        showLoader('Видалення з маршруту...');
         let ok = 0, fail = 0;
         for (const rteId of routeSelectedIds) {
-            const res = await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+            const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
             if (res.ok) { ok++; sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId); }
             else fail++;
         }
         hideLoader();
         routeSelectedIds.clear();
-        showToast('✅ Видалено: ' + ok + (fail ? ', помилок: ' + fail : ''));
+        _routeToolbarForceOpen = false;
+        updateRouteBulkToolbar();
+        showToast('✅ Прибрано з маршруту: ' + ok + (fail ? ', помилок: ' + fail : ''));
         renderRoutes();
     });
 }
@@ -3150,12 +3165,18 @@ async function doTransferRouteLead(rteId, fromSheet, toSheet) {
     const addRes = await apiPost('addToRoute', { sheetName: toSheet, leads: [row] });
     if (!addRes.ok) { hideLoader(); showToast('❌ ' + (addRes.error || 'Помилка додавання')); return; }
     // Delete from old route
-    const delRes = await apiPost('deletePassenger', { sheet: fromSheet, pax_id: rteId });
+    const delRes = await apiPost('deleteFromSheet', { sheet: fromSheet, id_col: 'RTE_ID', id_val: rteId });
     hideLoader();
     if (delRes.ok) {
+        // Видаляємо зі старого маршруту
         sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
+        routeSelectedIds.delete(rteId);
+        // Інвалідуємо дані цільового маршруту щоб при відкритті перезавантажив
+        var targetRoute = routes.find(function(r) { return r.sheetName === toSheet; });
+        if (targetRoute) { targetRoute.rows = null; targetRoute.paxCount = (targetRoute.paxCount || 0) + 1; }
+        renderRouteSidebar();
+        renderRoutes();
         showToast('✅ Пересаджено в ' + toSheet.replace('Маршрут_', ''));
-        loadRoutes();
     } else {
         showToast('⚠️ Додано в новий маршрут, але не видалено зі старого');
     }
@@ -3189,13 +3210,19 @@ async function doBulkTransfer(toSheet) {
 
     let ok = 0;
     for (const rteId of routeSelectedIds) {
-        const res = await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+        const res = await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
         if (res.ok) { ok++; sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId); }
     }
+    // Інвалідуємо цільовий маршрут
+    var targetRoute = routes.find(function(r) { return r.sheetName === toSheet; });
+    if (targetRoute) { targetRoute.rows = null; targetRoute.paxCount = (targetRoute.paxCount || 0) + ok; }
     hideLoader();
     routeSelectedIds.clear();
+    _routeToolbarForceOpen = false;
+    updateRouteBulkToolbar();
+    renderRouteSidebar();
+    renderRoutes();
     showToast('✅ Пересаджено: ' + ok + ' в ' + toSheet.replace('Маршрут_', ''));
-    loadRoutes();
 }
 
 // ── Створення нового маршруту ──
@@ -3329,7 +3356,6 @@ function updateAllCounts() {
     setCount('pcCountUaEu', uaeu.length);
     setCount('pcCountEuUa', euua.length);
     setCount('pcCountTrips', trips.length);
-    setCount('pcCountArchive', archivedPassengers.length);
     setCount('mobileCountAll', allPax.length);
     setCount('mobileCountNew24', new24.length);
     setCount('mobileCountUaEu', uaeu.length);
@@ -4943,7 +4969,7 @@ function renderCalDay(d, key, info, otherMonth, isToday, selectedKey) {
         } else if (info.euua > 0) {
             dotsHtml = '<span class="dot-eu-ua"></span>';
         }
-        const paxStyle = info.overbooked ? ' style="color:#dc2626;font-weight:800;"' : '';
+        const paxStyle = info.overbooked ? ' style="color:#d97706;font-weight:800;"' : '';
         paxHtml = `<span class="tcal-pax"${paxStyle} onclick="event.stopPropagation();showTripPassengersByDate('${key}')" title="Пасажири">${info.pax}</span>`;
     }
 
@@ -5607,11 +5633,13 @@ function archiveTrip(calId, city, date) {
         showLoader('Архівування рейсу...');
         var res = await apiPost('archiveTrip', { cal_id: calId });
         if (!res.ok) { hideLoader(); showToast('❌ ' + (res.error || '')); return; }
-        // Після API — оновлюємо дані з сервера перш ніж показати результат
-        var tripRes = await apiPost('getTrips', { filter: {} });
-        if (tripRes.ok) trips = tripRes.data;
-        renderTrips();
+        // Видаляємо з локального масиву одразу
+        trips = trips.filter(t => t.cal_id !== calId && t.CAL_ID !== calId);
+        passengers.forEach(p => { if (p['CAL_ID'] === calId) p['CAL_ID'] = ''; });
         updateAllCounts();
+        updateTripFilterDropdown();
+        if (currentView === 'trips') renderTrips();
+        else render();
         hideLoader();
         showToast('✅ Рейс архівовано');
     });
@@ -5628,9 +5656,15 @@ function deleteTrip(calId, city, date) {
         showLoader('Видалення рейсу...');
         var res = await apiPost('deleteTrip', { cal_id: calId });
         if (!res.ok) { hideLoader(); showToast('❌ ' + (res.error || 'Невідома помилка')); return; }
-        // Чекаємо поки дані реально оновляться перед показом результату
-        showLoader('⏳ Оновлення списку...');
-        await silentSync(false, true);
+        // Видаляємо з локального масиву одразу
+        trips = trips.filter(t => t.cal_id !== calId && t.CAL_ID !== calId);
+        // Знімаємо CAL_ID у пасажирів що були на цьому рейсі
+        passengers.forEach(p => { if (p['CAL_ID'] === calId) p['CAL_ID'] = ''; });
+        // Перерендерюємо інтерфейс
+        updateAllCounts();
+        updateTripFilterDropdown();
+        if (currentView === 'trips') renderTrips();
+        else render();
         hideLoader();
         showToast('✅ Рейс видалено');
     });
@@ -7085,7 +7119,7 @@ async function reorderRouteAfterOptimize() {
     try {
         // Видалити всіх пасажирів
         for (const r of paxRows) {
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: r['RTE_ID'] });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: r['RTE_ID'] });
         }
 
         // Додати заново в оптимізованому порядку
@@ -7096,10 +7130,15 @@ async function reorderRouteAfterOptimize() {
         });
         await apiPost('addToRoute', { sheetName, leads: leadsData });
 
+        // Перезавантажуємо дані маршруту з сервера (forceRefresh)
+        if (activeRouteIdx !== null && routes[activeRouteIdx]) {
+            routes[activeRouteIdx].rows = null;
+            await loadRouteSheetData(activeRouteIdx, true);
+        }
         hideLoader();
+        renderRoutes();
         showToast('✅ Порядок в маршруті оновлено!');
         window._optimizeRouteContext = null;
-        loadRoutes();
     } catch (e) {
         hideLoader();
         showToast('❌ Помилка: ' + e.message);
@@ -7130,7 +7169,6 @@ async function loadArchive(append) {
             }
             archiveTotal = res.total || archivedPassengers.length;
             archiveHasMore = res.hasMore || false;
-            setCount('pcCountArchive', archiveTotal);
             if (currentView === 'archive') renderArchive();
         }
     } catch (e) {
@@ -7148,7 +7186,8 @@ function showArchiveView() {
     document.getElementById('archiveView').style.display = 'block';
     updatePcSidebarActive();
     updateMobileSidebarActive();
-    loadArchive(); // Завантажити свіжі дані з Archive_crm_v3
+    showLoader('📦 Завантаження архіву...');
+    loadArchive().then(function() { hideLoader(); }).catch(function() { hideLoader(); });
 }
 
 function getArchivedPassengers() {
@@ -7392,15 +7431,17 @@ async function archiveFromRoute(rteId, sheetName, leadName) {
         if (!yes) return;
         showLoader('Архівування...');
         try {
-            // 1. Архівувати в CRM (фізично переносить в Archive_crm_v3)
-            await apiPost('archivePassenger', { pax_ids: [rteId], reason: 'Архівовано з маршруту', archived_by: 'Менеджер' });
-            // 2. Видалити з маршруту
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
-            hideLoader();
-            showToast('✅ Архівовано і видалено з маршруту');
+            await apiPost('archivePassenger', { pax_ids: [rteId], reason: 'Архівовано з маршруту', archived_by: getManagerName() || 'Менеджер' });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
+            // Оновлюємо локальні дані
+            const sheet = routes[activeRouteIdx];
+            if (sheet) sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             passengers = passengers.filter(x => x['PAX_ID'] !== rteId);
-            loadRoutes();
+            routeSelectedIds.delete(rteId);
+            hideLoader();
             updateAllCounts();
+            renderRoutes();
+            showToast('✅ Архівовано і видалено з маршруту');
         } catch (e) {
             hideLoader();
             showToast('❌ Помилка: ' + e.message);
@@ -7414,15 +7455,17 @@ async function deleteFromRouteFull(rteId, sheetName, leadName) {
         if (!yes) return;
         showLoader('Видалення...');
         try {
-            // 1. Видалити з маршруту
-            await apiPost('deletePassenger', { sheet: sheetName, pax_id: rteId });
-            // 2. Архівувати з CRM (soft delete — зберігаємо в архіві з позначкою "Видалено")
-            await apiPost('archivePassenger', { pax_ids: [rteId], reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
+            await apiPost('deleteFromSheet', { sheet: sheetName, id_col: 'RTE_ID', id_val: rteId });
+            await apiPost('deletePassenger', { pax_ids: [rteId], reason: 'Видалено з маршруту і CRM', archived_by: getManagerName() || 'Менеджер' });
+            // Оновлюємо локальні дані
+            const sheet = routes[activeRouteIdx];
+            if (sheet) sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             passengers = passengers.filter(x => x['PAX_ID'] !== rteId);
+            routeSelectedIds.delete(rteId);
             hideLoader();
-            showToast('✅ Видалено з маршруту (збережено в архіві)');
-            loadRoutes();
             updateAllCounts();
+            renderRoutes();
+            showToast('✅ Видалено з маршруту і CRM');
         } catch (e) {
             hideLoader();
             showToast('❌ Помилка: ' + e.message);
@@ -7441,16 +7484,19 @@ function routeBulkArchive() {
         if (!sheet) return;
         showLoader('Архівування...');
         try {
-            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Масове архівування з маршруту', archived_by: 'Менеджер' });
+            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Архівовано з маршруту', archived_by: getManagerName() || 'Менеджер' });
             for (const rteId of ids) {
-                await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+                await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
+                sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             }
             passengers = passengers.filter(x => !ids.includes(x['PAX_ID']));
             hideLoader();
             showToast('✅ Архівовано ' + ids.length + ' записів');
-            clearRouteSelection();
-            loadRoutes();
+            routeSelectedIds.clear();
+            _routeToolbarForceOpen = false;
+            updateRouteBulkToolbar();
             updateAllCounts();
+            renderRoutes();
         } catch (e) {
             hideLoader();
             showToast('❌ Помилка: ' + e.message);
@@ -7470,15 +7516,18 @@ function routeBulkDeleteFull() {
         showLoader('Видалення...');
         try {
             for (const rteId of ids) {
-                await apiPost('deletePassenger', { sheet: sheet.sheetName, pax_id: rteId });
+                await apiPost('deleteFromSheet', { sheet: sheet.sheetName, id_col: 'RTE_ID', id_val: rteId });
+                sheet.rows = (sheet.rows || []).filter(r => r['RTE_ID'] !== rteId);
             }
-            // Архівувати з CRM (soft delete)
-            await apiPost('archivePassenger', { pax_ids: ids, reason: 'Видалено з маршруту і CRM', archived_by: 'Менеджер' });
+            await apiPost('deletePassenger', { pax_ids: ids, reason: 'Видалено з маршруту і CRM', archived_by: getManagerName() || 'Менеджер' });
             passengers = passengers.filter(x => !ids.includes(x['PAX_ID']));
             hideLoader();
             showToast('✅ Видалено ' + ids.length + ' записів (збережено в архіві)');
-            clearRouteSelection();
-            loadRoutes();
+            routeSelectedIds.clear();
+            _routeToolbarForceOpen = false;
+            updateRouteBulkToolbar();
+            updateAllCounts();
+            renderRoutes();
             updateAllCounts();
         } catch (e) {
             hideLoader();
@@ -7762,6 +7811,12 @@ function obFinish(completed) {
 
 // Навчання тільки по кнопці — без автозапуску
 function checkOnboardingAutoStart() { }
+</script>
+
+<script>
+function openVideoModal() {
+    window.open('https://youtu.be/dXhlCFwPJiY', '_blank');
+}
 </script>
 </body>
 </html>
